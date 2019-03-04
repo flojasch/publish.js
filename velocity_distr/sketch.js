@@ -22,7 +22,7 @@ function setup() {
       balls.push(new Ball(x, y, 10, 0, 5));
     }
   }
-  // balls.push(new Ball(width / 2, height / 2, 50, 0, 0, 0, 0, 200));
+  balls.push(new Ball(width / 2, height / 2, 50, 0, 0, 0, 0, 200));
 
 }
 
