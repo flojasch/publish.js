@@ -1,6 +1,7 @@
 var renderer;
 var geometry;
 let traeger;
+let t = 0;
 
 function setup() {
 
@@ -30,7 +31,7 @@ function setup() {
 }
 
 function draw() {
-    background(0);
+    background(100);
     for (var y = 0; y <= geometry.detailY; y++) {
         for (var x = 0; x <= geometry.detailX; x++) {
             geometry.vertices[y * (geometry.detailX + 1) + x].z = traeger.z[x][y];
@@ -38,13 +39,16 @@ function draw() {
         }
     }
     traeger.update();
+    t += 1;
+    // traeger.set(geometry.detailX / 2 - 10, geometry.detailY / 2, 0.05 * Math.sin(t / 2));
+    // traeger.set(geometry.detailX / 2 + 10, geometry.detailY / 2, 0.05 * Math.sin(t / 2));
     fill(255);
     noStroke();
 
-    var dirX = (mouseX / width - 0.5) * 2;
-    var dirY = (mouseY / height - 0.5) * 2;
-
-    directionalLight(255, 250, 136, -dirX, -dirY, 0.25);
+    // var dirX = (mouseX / width - 0.5) * 2;
+    // var dirY = (mouseY / height - 0.5) * 2;
+     console.log(mouseX,mouseY);
+    directionalLight(66, 140, 244, 0, 0.5, 0.25);
 
     // re-compute the faces & normals
     geometry.computeFaces().computeNormals();
