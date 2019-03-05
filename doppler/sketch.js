@@ -15,7 +15,7 @@ function setup() {
     camera(0, -600, 300, 0, 0, 0, 0, -1, 0);
 
     // there's 10,000 points on the surface.
-    geometry = new p5.Geometry(10, 10, function () {
+    geometry = new p5.Geometry(100, 100, function () {
         for (var y = 0; y <= this.detailY; y++) {
             var w = y / this.detailY;
             for (var x = 0; x <= this.detailX; x++) {
