@@ -4,7 +4,7 @@ class Traeger {
         this.cols = cols;
         this.z = [];
         this.vz = [];
-        this.damping = 0;
+        this.damping = -2;
         this.c=0.2;
         this.reset();
     }
