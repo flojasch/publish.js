@@ -77,6 +77,7 @@ class Ball {
     }
   }
   update() {
+    this.v.add(gravity);
     this.r.add(this.v);
   }
 
