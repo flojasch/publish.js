@@ -1,34 +1,20 @@
 var renderer;
 var geometry;
 let traeger;
-let t = 0;
-let z = 0;
-let z0;
-let xPicked;
 let picked = false;
-let fSlider;
-let freq;
-let freqalt;
-let xh=0;
+let sliderPos = 20;
 
 function setup() {
     // we need to remember the renderer that is created so
     // we can call some of its internal methods later
     renderer = createCanvas(windowWidth, windowHeight, WEBGL);
-    fSlider = createSlider(0.02, 0.25, 0.02, 0.005);
-    fSlider.position(20, 20);
-    cSlider = createSlider(0.1, 0.5, 0.1, 0.05);
-    cSlider.position(200, 20);
-    sSlider = createSlider(0,1,0.5,0.05);
-    sSlider.position(400,20);
-    dampButton = createButton('damping');
-    dampButton.position(600, 20);
-    dampButton.mousePressed(toggleDamping);
-    text=createP("soundspeed",textSize=20);
-    text.position(200,40);
-    fill(0);
 
-    noStroke();
+    cSlider = new Slider(20, 20, 0.1, 0.5, 0.2, 0.05);
+
+    dampButton = createButton('Turn damping on');
+    dampButton.position(800, 20);
+    dampButton.mousePressed(toggleDamping);
+
     // set up the camera. the geometry is in the x,y plane
     // so the camera is below the z axis lookup up at (0,0,0)
     camera(0, -600, 300, 0, 0, 0, 0, -1, 0);
@@ -45,30 +31,82 @@ function setup() {
         }
     });
     traeger = new Traeger(geometry.detailX, geometry.detailY);
-    c = traeger.c;
-    freqalt = freq = 0;
+    t = 0;
+    z = 0;
+    gen1 = new Generator(40, geometry.detailY / 2, 0, 0.25, 0.04);
+    gen2 = new Generator(60, geometry.detailY / 2, 0, 0.25, 0.04);
+
+}
+
+class Slider {
+    constructor(x, y, first, last, beginn, step) {
+        this.slider = createSlider(first, last, beginn, step);
+        this.slider.position(x, y);
+        this.text = createP();
+        this.text.position(x, y + 20);
+        this.text.style('font-size', '160%');
+    }
+}
+class Generator {
+    constructor(x, y, v, freq, amp) {
+        this.x = x;
+        this.y = y;
+        this.v = v;
+        this.freq = freq;
+        this.amp = amp;
+        this.fSlider = new Slider(220, sliderPos, 0.02, 0.25, this.freq, 0.005);
+        this.vSlider = new Slider(420, sliderPos, 0, 1, this.v, 0.05);
+        this.aSlider = new Slider(620, sliderPos, 0, 0.1, this.amp, 0.005);
+        sliderPos += 100;
+    }
+
+    update() {
+        if (this.freq != this.fSlider.slider.value()) {
+            this.freq = this.fSlider.slider.value();
+            traeger.reset();
+            t = 0;
+            while (t < 2000) {
+                traeger.update();
+                traeger.pull(floor(this.x), this.y, this.amp * Math.sin(t * this.freq));
+                t++;
+            }
+        }
+
+        this.v = this.vSlider.slider.value();
+        this.amp = this.aSlider.slider.value();
+        this.x += this.v;
+        if (this.x > geometry.detailX) {
+            this.x = 0;
+        }
+        traeger.pull(floor(this.x), this.y, this.amp * Math.sin(t * this.freq));
+        this.vSlider.text.html("Speed of </br> generator: " + this.v);
+        this.aSlider.text.html("Amplitude: " + this.amp);
+        this.fSlider.text.html("Frequency: " + this.freq);
+    }
 }
 
 function toggleDamping() {
     if (traeger.damping == 0) {
         traeger.damping = -2;
+        dampButton.html('Turn damping off');
     } else {
         traeger.damping = 0;
+        dampButton.html('Turn damping on');
     }
     traeger.reset();
 }
 
 function mousePressed() {
-    xPicked = floor(geometry.detailX / width * (100 + width - mouseX));
-    picked = true;
-    z0 = mouseY;
-    z = 0;
-
+    if (mouseY > 200) {
+        xPicked = floor(geometry.detailX / width * (100 + width - mouseX));
+        picked = true;
+        z0 = mouseY;
+        z = 0;
+    }
 }
 
 function mouseDragged() {
     z = (z0 - mouseY) / height;
-    // console.log(xPicked,z);
 }
 
 function mouseReleased() {
@@ -77,31 +115,15 @@ function mouseReleased() {
 
 function draw() {
     background(100);
-    traeger.c = cSlider.value();
-    freq = fSlider.value();
-    speed =sSlider.value();
-    if (freq != freqalt || traeger.c != c) {
-        t = 0;
-        freqalt = freq;
-        c = traeger.c;
-        traeger.reset();
-        // while (t < 500) {
-        //     traeger.update();
-        //     traeger.pull(geometry.detailX / 2, geometry.detailY / 2, 0.01 * Math.sin(t * freq));
-        //     t++;
-        // }
-    }
+    traeger.c = cSlider.slider.value();
+    cSlider.text.html("Soundspeed: " + traeger.c);
+    gen1.update();
+    gen2.update();
     traeger.update();
-    // traeger.pull(geometry.detailX / 2, geometry.detailY / 2, 0.01 * Math.sin(t * freq));
     t++;
     if (picked) {
-        // traeger.set(xPicked, geometry.detailY / 2, z);
+        traeger.set(xPicked, geometry.detailY / 2, z);
     }
-    xh += speed;
-    if(xh>geometry.detailX){
-        xh=0;
-    }
-    traeger.pull(floor(xh), geometry.detailY / 2, 0.02 * Math.sin(t * freq));
 
     for (let y = 0; y <= geometry.detailY; y++) {
         for (let x = 0; x <= geometry.detailX; x++) {
