@@ -3,13 +3,17 @@ let tableWidth = 100;
 let tableHeight = 50;
 let xAbstand = 50;
 let yAbstand = 10;
-let orientation;
 let names = ['Tizian', 'Leonie', 'Jana', 'Anton', 'Anna',
   'Smilla', 'Felix', 'Amelie', 'Artur', 'Matilda', 'Lucy', 'Mara', 'Lilian',
   'Ida', 'Isabel', 'Max', 'Noah', 'Paolo', 'Jan Luca', 'Meik', 'Jonas',
   'Dorentina', 'Alina', 'Darwin', 'Lennard', 'Medin'
 ];
-let drawline = false;
+let name = 'none';
+let picked = 0;
+let isPicked = false;
+let noList = true;
+let list;
+
 
 function setup() {
   canvas = createCanvas(1500, 1000);
@@ -21,60 +25,84 @@ function setup() {
   tables = [];
   let x = 0;
   let y = 0;
-  orientation = 0;
-  for (let i = 0; i < 13; i++) {
-    createTable(x, y);
-    x += tableWidth;
-  }
-  y = 200;
-  x = 0;
-  for (let i = 0; i < 13; i++) {
-    createTable(x, y);
+  for (let i = 0; i < names.length; i++) {
+    if (i == names.length / 2) {
+      y = 200;
+      x = 0;
+    }
+    tables.push(new Table(x, y, names[i], 0));
     x += tableWidth;
   }
 }
 
 function mousePressed() {
-  if (mouseX < 890) {
-    
+  if (mouseY > 0) {
+    for (let i = 0; i < names.length; i++) {
+      if (abs(tables[i].x + tableWidth / 2 - mouseX) < tableWidth / 2 &&
+        abs(tables[i].y + tableHeight / 2 - mouseY) < tableHeight / 2) {
+        picked = i;
+        isPicked = true;
+      }
+    }
   }
 }
 
 function mouseDragged() {
-  // drawline = true;
+  if (isPicked) {
+    tables[picked].x = mouseX;
+    tables[picked].y = mouseY;
+  }
 }
 
-function createTable(x, y) {
-  let i = floor(random() * names.length);
-  let name = names.splice(i, 1);
-  tables.push(new Table(x, y, name, orientation));
+function mouseReleased() {
+  isPicked = false;
+}
+
+function createTable(x, y, orientation) {
+  if (name == 'none') {
+    let i = floor(random() * names.length / 2) * 2;
+    name = names.splice(i, 1);
+    tables.push(new Table(x, y, name, orientation));
+    name = names.splice(i, 1);
+  } else {
+    tables.push(new Table(x, y, name, orientation));
+    name = 'none';
+  }
+}
+
+function createList() {
+  list = [];
+  for (let i = 0; i < tables.length / 2; i++) {
+    list.push(tables[i].name);
+    for (let j = tables.length / 2; j < tables.length; j++) {
+      if (abs(tables[i].y - tables[j].y) < tableHeight + 10 &&
+        abs(tables[i].x - tables[j].x) < 10) {
+        list.push(tables[j].name);
+      }
+    }
+  }
+  noList = false;
 }
 
 function erstelleSitzordnung() {
-  names = ['Tizian', 'Leonie', 'Jana', 'Anton', 'Anna',
-    'Smilla', 'Felix', 'Amelie', 'Artur', 'Matilda', 'Lucy', 'Mara', 'Lilian',
-    'Ida', 'Isabel', 'Max', 'Noah', 'Paolo', 'Jan Luca', 'Meik', 'Jonas',
-    'Dorentina', 'Alina', 'Darwin', 'Lennard', 'Medin'
-  ];
+  if (noList) {
+    createList();
+  }
   tables = [];
-  let x = xAbstand;
-  let y = yAbstand;
-  orientation = 0;
-  //hintere Reihe
-  for (let i = 0; i < 8; i++) {
-    createTable(x, y);
-    x += tableWidth;
+  names = [];
+  for (let i=0;i<list.length;i++) {
+    names[i]=list[i];
   }
   //Mittelreihen
-  x = xAbstand + tableHeight;
-  y = yAbstand + tableHeight + 2 * tableWidth;
-  for (let i = 0; i < 3; i++) {
-    createTable(x, y);
+  let x = xAbstand + tableHeight;
+  let y = yAbstand + tableHeight + 2 * tableWidth;
+  for (let i = 0; i < 2; i++) {
+    createTable(x, y, 0);
     x += tableWidth;
   }
   x = xAbstand + tableHeight;
   y = yAbstand + tableHeight + 4.5 * tableWidth;
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 2; i++) {
     createTable(x, y);
     x += tableWidth;
   }
@@ -88,23 +116,30 @@ function erstelleSitzordnung() {
   y = yAbstand + tableHeight + 4.5 * tableWidth;
   for (let i = 0; i < 2; i++) {
     createTable(x, y);
+    x += tableWidth;
+  }
+  //Türreihe
+  x = xAbstand + tableHeight;
+  y = yAbstand + tableHeight + 4 * tableWidth;
+  for (let i = 0; i < 5; i++) {
+    createTable(x, y, 90);
+    y -= tableWidth;
+  }
+  //hintere Reihe
+  x = xAbstand;
+  y = yAbstand;
+  for (let i = 0; i < 8; i++) {
+    createTable(x, y, 0);
     x += tableWidth;
   }
   //Fensterreihe
   x = xAbstand + 8 * tableWidth;
   y = yAbstand + tableHeight;
-  orientation = 90;
   for (let i = 0; i < 5; i++) {
-    createTable(x, y);
+    createTable(x, y, 90);
     y += tableWidth;
   }
-  //Türreihe
-  x = xAbstand + tableHeight;
-  y = yAbstand + tableHeight;
-  for (let i = 0; i < 5; i++) {
-    createTable(x, y);
-    y += tableWidth;
-  }
+
 }
 
 function draw() {
@@ -112,9 +147,6 @@ function draw() {
   for (let i = 0; i < tables.length; i++) {
     tables[i].show();
   }
-  // if (drawline) {
-  //   line(startx, starty, mouseX, mouseY);
-  // }
 }
 
 class Table {
