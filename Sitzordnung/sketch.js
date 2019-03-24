@@ -40,7 +40,7 @@ function setup() {
     }
     if (k == names.length)
       break;
-    y += 200;
+    y += 100;
   }
 }
 
