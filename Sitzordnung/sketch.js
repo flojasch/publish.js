@@ -20,21 +20,33 @@ function setup() {
   canvas.position(50, 100);
   background(255);
   button = createButton('bestimme Sitzordnung');
-  button.position(900, 20);
+  button.position(20, 20);
   button.mousePressed(erstelleSitzordnung);
+  saveButton = createButton('save Image');
+  saveButton.position(200,20);
+  saveButton.mousePressed(saveOrdnung);
   tables = [];
   let x = 0;
   let y = 0;
-  for (let i = 0; i < names.length; i++) {
-    if (i == names.length / 2) {
-      y = 200;
-      x = 0;
+  let k = 0;
+  for (let i = 0; i < 4; i++) {
+    x = 0;
+    for (let j = 0; j < 7; j++) {
+      if (k == names.length)
+        break;
+      tables.push(new Table(x, y, names[k], 0));
+      x += tableWidth;
+      k++;
     }
-    tables.push(new Table(x, y, names[i], 0));
-    x += tableWidth;
+    if (k == names.length)
+      break;
+    y += 200;
   }
 }
 
+function saveOrdnung(){
+  saveCanvas(canvas, 'myCanvas', 'jpg');
+}
 function mousePressed() {
   if (mouseY > 0) {
     for (let i = 0; i < names.length; i++) {
@@ -90,8 +102,8 @@ function erstelleSitzordnung() {
   }
   tables = [];
   names = [];
-  for (let i=0;i<list.length;i++) {
-    names[i]=list[i];
+  for (let i = 0; i < list.length; i++) {
+    names[i] = list[i];
   }
   //Mittelreihen
   let x = xAbstand + tableHeight;
