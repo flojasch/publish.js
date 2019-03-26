@@ -5,18 +5,30 @@ let osziNum = 200;
 let y0;
 let y = 0;
 let t = 0;
+let reflektButton;
 
 function setup() {
     canvas = createCanvas(windowWidth, 500);
     cSlider = new Slider(220, height + 20, 0.1, 0.5, 0.2, 0.05);
-    dampButton = createButton('Reset');
-    dampButton.position(20, height + 20);
-    dampButton.mousePressed(toggleDamping);
+    resetButton = createButton('on/off');
+    resetButton.position(20, height + 20);
+    resetButton.mousePressed(toggleGenerator);
+    reflektButton = createButton('fest/lose');
+    reflektButton.position(width - 70, height + 20);
+    reflektButton.mousePressed(toggleEnde);
     traeger = new Traeger(osziNum);
     gen = new Generator(0, 0.2, 0.01);
 
 }
+function toggleGenerator() {
+    t=0;
+    gen.on = !gen.on;
+}
 
+function toggleEnde() {
+    traeger.reset();
+    traeger.fest = !traeger.fest;
+}
 class Slider {
     constructor(x, y, first, last, beginn, step) {
         this.slider = createSlider(first, last, beginn, step);
@@ -32,7 +44,8 @@ class Generator {
         this.freq = freq;
         this.amp = amp;
         this.fSlider = new Slider(420, height + 20, 0.01, 0.1, 0.02, 0.001);
-        this.aSlider = new Slider(620, height + 20, 0, 1, 0.5, 0.05);
+        this.aSlider = new Slider(620, height + 20, 0, 3, 0.5, 0.05);
+        this.on = false;
     }
 
     update() {
@@ -48,16 +61,14 @@ class Generator {
         }
 
         this.amp = this.aSlider.slider.value();
-
-        traeger.pull(floor(this.x), this.amp * Math.sin(t * this.freq));
+        if (this.on && t < 2*Math.PI/this.freq) {
+            traeger.pull(floor(this.x), this.amp * Math.sin(t * this.freq));
+        }
         this.aSlider.text.html("Amplitude: " + this.amp);
         this.fSlider.text.html("Frequency: " + this.freq);
     }
 }
 
-function toggleDamping() {
-    traeger.reset();
-}
 
 function mousePressed() {
     if (mouseY < 500) {
@@ -78,7 +89,7 @@ function draw() {
     traeger.show();
     t++;
     if (picked) {
-        traeger.set(mouseX, mouseY-height/2);
+        traeger.set(mouseX, mouseY - height / 2);
     }
 
 }
