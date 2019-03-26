@@ -9,6 +9,7 @@ function preload() {
   paddelSprite = loadImage('Images/paddel.png');
   ballSprite = loadImage('Images/ball.png');
   bgImg = loadImage('Images/space.jpg');
+  clack = loadSound('clack.wav');
 }
 
 function setup() {
@@ -42,6 +43,7 @@ function startGame(){
 
 function draw() {
   background(0);
+  let clackSound =false;
   image(bgImg, 0, 0, width, height);
   if (keyIsPressed) {
     //console.log(keyCode);
@@ -68,11 +70,13 @@ function draw() {
     ball.checkEdges();
     if(ball.collision(paddel)){
       ball.vy *= -1;
+      clackSound=true;
     }
     for (let i = 0; i < bricks.length; i++) {
       if (ball.collision(bricks[i])){
         bricks.splice(i,1);
         ball.vy *= -1;
+        clackSound=true;
       }
     }
     ball.update();
@@ -80,5 +84,8 @@ function draw() {
     for (let i = 0; i < bricks.length; i++) {
       bricks[i].show();
     }
+  }
+  if (clackSound) {
+    clack.play();
   }
 }

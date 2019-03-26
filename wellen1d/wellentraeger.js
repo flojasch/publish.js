@@ -3,9 +3,11 @@ class Traeger {
         this.rows = rows;
         this.y = [];
         this.vy = [];
-        this.damping = 0;
+        // this.damping = 0;
         this.c = 0.2;
+        this.fest =true;
         this.reset();
+         
     }
     reset() {
         for (let i = 0; i <= this.rows; i++) {
@@ -28,9 +30,9 @@ class Traeger {
         let ay = [];
         for (let i = 0; i <= this.rows; i++) {
             ay[i] = 0;
-            if (i == this.rows || i == 0) {
-                ay[i] = this.damping * this.vy[i];
-            }
+            // if (i == this.rows || i == 0) {
+            //     ay[i] = this.damping * this.vy[i];
+            // }
 
             if (i < this.rows) {
                 ay[i] += this.y[i + 1] - this.y[i];
@@ -45,6 +47,10 @@ class Traeger {
             this.vy[i] += ay[i];
             this.y[i] += this.vy[i];
         }
+        if(this.fest){
+            this.y[this.rows-1]=0;
+        }
+
     }
 
     show() {
