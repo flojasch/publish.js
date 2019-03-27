@@ -6,28 +6,40 @@ let y0;
 let y = 0;
 let t = 0;
 let reflektButton;
+let text;
 
 function setup() {
     canvas = createCanvas(windowWidth, 500);
     cSlider = new Slider(220, height + 20, 0.1, 0.5, 0.2, 0.05);
-    resetButton = createButton('on/off');
+    resetButton = createButton('Reset');
     resetButton.position(20, height + 20);
-    resetButton.mousePressed(toggleGenerator);
+    resetButton.mousePressed(reset);
     reflektButton = createButton('fest/lose');
-    reflektButton.position(width - 70, height + 20);
+    reflektButton.position(width - 150, height + 20);
+    text = createP();
+    text.style('font-size', '160%');
+    text.html('festes Ende');
+    text.position(width - 200, height + 50);
     reflektButton.mousePressed(toggleEnde);
     traeger = new Traeger(osziNum);
     gen = new Generator(0, 0.2, 0.01);
 
 }
-function toggleGenerator() {
-    t=0;
-    gen.on = !gen.on;
+
+function reset() {
+    traeger.reset();
+    t = 0;
 }
 
 function toggleEnde() {
     traeger.reset();
+    t = 0;
     traeger.fest = !traeger.fest;
+    if (traeger.fest) {
+        text.html('festes Ende');
+    } else {
+        text.html('loses Ende');
+    }
 }
 class Slider {
     constructor(x, y, first, last, beginn, step) {
@@ -43,8 +55,8 @@ class Generator {
         this.x = x;
         this.freq = freq;
         this.amp = amp;
-        this.fSlider = new Slider(420, height + 20, 0.01, 0.1, 0.02, 0.001);
-        this.aSlider = new Slider(620, height + 20, 0, 3, 0.5, 0.05);
+        this.fSlider = new Slider(420, height + 20, 0, 1, 0.5, 0.005);
+        this.aSlider = new Slider(620, height + 20, 0, 10, 3, 0.1);
         this.on = false;
     }
 
@@ -53,22 +65,20 @@ class Generator {
             this.freq = this.fSlider.slider.value();
             traeger.reset();
             t = 0;
-            while (t < 2000) {
+            while (t < 150) {
                 traeger.update();
-                traeger.pull(floor(this.x), this.amp * Math.sin(t * this.freq));
-                t++;
+                traeger.set(this.x, this.amp * Math.sin(t * 2 * Math.PI * this.freq));
+                t += 0.02;
             }
         }
 
         this.amp = this.aSlider.slider.value();
-        if (this.on && t < 2*Math.PI/this.freq) {
-            traeger.pull(floor(this.x), this.amp * Math.sin(t * this.freq));
-        }
+        traeger.set(this.x, this.amp * Math.sin(t * 2 * Math.PI * this.freq));
         this.aSlider.text.html("Amplitude: " + this.amp);
         this.fSlider.text.html("Frequency: " + this.freq);
+
     }
 }
-
 
 function mousePressed() {
     if (mouseY < 500) {
@@ -84,12 +94,12 @@ function draw() {
     background(200);
     traeger.c = cSlider.slider.value();
     cSlider.text.html("Soundspeed: " + traeger.c);
-    gen.update();
     traeger.update();
+    gen.update();
     traeger.show();
-    t++;
+    t += 0.02; 
     if (picked) {
-        traeger.set(mouseX, mouseY - height / 2);
+        traeger.pull(mouseX, mouseY - height / 2);
     }
 
 }

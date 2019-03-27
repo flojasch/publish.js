@@ -18,12 +18,13 @@ class Traeger {
 
     set(x, value) {
         let i = floor(x / width * this.rows);
-        this.y[i] = value;
+        this.y[i] = 10*value;
         this.vy[i] = 0;
     }
 
-    pull(i, force) {
-        this.vy[i] += force;
+    pull(x, value) {
+        let i = floor(x / width * this.rows);
+        this.vy[i] += (value-this.y[i])*0.02;
     }
 
     update() {
