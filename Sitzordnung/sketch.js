@@ -84,12 +84,17 @@ function createTable(x, y, orientation) {
 
 function createList() {
   list = [];
-  for (let i = 0; i < tables.length / 2; i++) {
-    list.push(tables[i].name);
-    for (let j = tables.length / 2; j < tables.length; j++) {
-      if (abs(tables[i].y - tables[j].y) < tableHeight + 10 &&
-        abs(tables[i].x - tables[j].x) < 10) {
+  while (tables.length > 0) {
+    list.push(tables[0].name);
+    let y=tables[0].y;
+    let x=tables[0].x;
+    tables.splice(0,1);
+    for (let j = 0; j < tables.length; j++) {
+      if (abs(y - tables[j].y) < tableHeight + 10 &&
+        abs(x - tables[j].x) < 10) {
         list.push(tables[j].name);
+        tables.splice(j,1);
+        break;
       }
     }
   }
