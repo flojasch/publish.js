@@ -37,7 +37,6 @@ function startGame(){
 
 /*function keyPressed(){
   if(keyCode == 32){
-
   }
 }*/
 
@@ -46,17 +45,11 @@ function draw() {
   let clackSound =false;
   image(bgImg, 0, 0, width, height);
   if (keyIsPressed) {
-    //console.log(keyCode);
-    if (keyCode == 39) {
-      paddel.left();
-    }
-    if (keyCode == 37) {
-      paddel.right();
-    }
     if (keyCode == 32) {
       startGame();
     }
   }
+  paddel.update();
   if(ball.y < 0){
     textSize(60);
     fill(200,50,10);

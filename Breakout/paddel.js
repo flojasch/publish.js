@@ -3,15 +3,18 @@ class Paddel extends GameObject {
     super(x, y, sprite);
   }
 
-  left() {
-    if (this.x < width - this.icon.width) {
-      this.x += 10;
-    }
-  }
-  
-  right() {
-    if (this.x > 0) {
-      this.x -= 10;
+  update() {
+    if (keyIsPressed) {
+      if (keyCode == 39) {
+        if (this.x < width - this.icon.width) {
+          this.x += 10;
+        }
+      }
+      if (keyCode == 37) {
+        if (this.x > 0) {
+          this.x -= 10;
+        }
+      }
     }
   }
 }
