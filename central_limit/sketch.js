@@ -6,6 +6,8 @@ let text;
 let button;
 let n;
 let showgaus = false;
+let sig;
+let mean;
 
 function setup() {
   let canvas = createCanvas(1000, 700);
@@ -36,12 +38,20 @@ function restart() {
 }
 
 function sigma() {
-  let mu = n / 2;
+  let m = mu();
   let sigma = 0;
   for (let i = 0; i < slices; i++) {
-    sigma += h[i] * pow(i * n / slices - mu, 2);
+    sigma += h[i] * pow((i+0.5) * n / slices - m, 2);
   }
   return sigma / N;
+}
+
+function mu(){
+  let mu=0;
+  for(let i=0;i<slices;i++){
+    mu += h[i]*(i+0.5)*n/slices;
+  }
+  return mu/N;
 }
 
 function draw() {
@@ -70,14 +80,15 @@ function draw() {
   }
   if (showgaus) {
     sig = sigma();
+    mean = mu();
     for (let i = 0; i < width; i++) {
       stroke(200, 0, 0);
       strokeWeight(3);
-      point(i, height * (1 - 0.293 * n * normal(i)));
+      point(i, height * (1 - 15/slices * n * normal(i)));
     }
   }
 }
 
 function normal(i) {
-  return exp(-0.5 / sig * pow(i * n / width - n / 2, 2)) / sqrt(2 * PI * sig);
+  return exp(-0.5 / sig * pow(i * n / width - mean, 2)) / sqrt(2 * PI * sig);
 }
