@@ -61,7 +61,7 @@ function draw() {
   } else{
     paddel.show();
     ball.checkEdges();
-    if(ball.collision(paddel)){
+    if(GameObject.collision(paddel,ball)){
       ball.vy *= -1;
       clackSound=true;
     }
