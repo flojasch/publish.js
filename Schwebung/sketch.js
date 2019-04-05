@@ -1,57 +1,82 @@
-let time = 0;
-let wave = [];
 
 let slider;
 
 function setup() {
   createCanvas(windowWidth, 400);
-  slider = createSlider(1, 200, 1);
-  slider.position(20, 420);
-  speedslider = createSlider(-10, 10, -5, 0.1);
-  speedslider.position(220, 420);
+  slider = createSlider(0, 2, 1, 0.05);
+  slider.position(20, 50);
+  let radius = 50;
+  a1 = new Arrow(radius, 1, color(255, 255, 0));
+  a2 = new Arrow(radius, 1, color(0, 255, 255));
+  a3 = new Arrow(radius, 1, color(255, 255, 255));
   //frameRate(30);
 }
 
 function draw() {
   background(0);
-  speed = speedslider.value();
-  translate(300, 200);
+  translate(150, 200);
+  a2.w = slider.value();
+  a3.w =a2.w;
+  a1.update();
+  a2.update();
+  a3.update();
+  a1.show();
+  a2.show();
+  a3.show(a1.x, a1.y);
+}
 
-  let radius = 50;
-  let x1 = radius * cos(time);
-  let y1 = radius * sin(time);
-  let x2 = radius * cos(1.2 * time);
-  let y2 = radius * sin(1.2 * time);
-
-  stroke(255, 150);
-  noFill();
-  ellipse(0, 0, radius * 2);
-  ellipse(x1, y1, radius * 2);
-  let x = x1 + x2;
-  let y = y1 + y2;
-  line(0, 0, x2, y2);
-  
-  line(x2,y2,x,y);
-  stroke(0, 255, 255);
-  line(0, 0, x1, y1);
-  line(x1,y1,x,y);
-  
-
-  wave.unshift(y);
-  translate(200, 0);
-  stroke(255, 100);
-  line(x - 200, y, 0, wave[0]);
-  stroke(0, 255, 255);
-  beginShape();
-  noFill();
-  for (let i = 0; i < wave.length; i++) {
-    vertex(i, wave[i]);
+class Arrow {
+  constructor(r, w, c) {
+    this.wave = [];
+    this.r = r;
+    this.w = w;
+    this.c = c;
+    this.x = 0;
+    this.y = 0;
+    this.alpha = 0;
   }
-  endShape();
+  update() {
+    this.alpha += this.w*0.05;
+    this.x = this.r * cos(this.alpha);
+    this.y = this.r * sin(this.alpha);
+  }
 
-  time += 0.005 * speed;
+  show(tx = 0, ty = 0) {
+    stroke(255, 150);
+    noFill();
+    ellipse(tx, ty, this.r * 2);
+    stroke(this.c);
+    fill(this.c);
+    push();
+    translate(tx, ty);
+    rotate(this.alpha);
+    line(0, 0, this.r, 0);
+    translate(this.r, 0);
+    beginShape();
+    vertex(-7, -3);
+    vertex(0, 0);
+    vertex(-7, 3);
+    endShape(CLOSE);
+    pop();
 
-  if (wave.length > width - 500) {
-    wave.pop();
+    let x = this.x + tx;
+    let y = this.y + ty;
+    
+    this.wave.unshift(y);
+    push();
+    translate(200, 0);
+    stroke(255, 100);
+    line(x - 200, y, 0, this.wave[0]);
+    stroke(this.c);
+    beginShape();
+    noFill();
+    for (let i = 0; i < this.wave.length; i++) {
+      vertex(i, this.wave[i]);
+    }
+    endShape();
+    if (this.wave.length > width - 150) {
+      this.wave.pop();
+    }
+    pop();
   }
 }
