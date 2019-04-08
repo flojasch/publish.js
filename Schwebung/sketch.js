@@ -33,7 +33,7 @@ function draw() {
   a1.show();
   a2.show();
   a3.show(a1.x, a1.y);
-
+  line(0,0,a1.x+a2.x,a1.y+a2.y);
 }
 
 class Arrow {
