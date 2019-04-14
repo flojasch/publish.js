@@ -1,13 +1,14 @@
 let canvas;
 let geometry;
 let terrain = [];
+let yspeed = 0;
 let ypos = 0;
-let xpos = 50;
-let zpos = 300;
-let angle =0;
-let hoehe =0;
+let xpos = 0;
+let angle = 0;
+let xAngle = 0;
+let hoehe = 0;
 
-function setup() { 
+function setup() {
     canvas = createCanvas(windowWidth, windowHeight, WEBGL);
     geometry = new p5.Geometry(100, 100, oberflaeche);
     img1 = loadImage('mercury.jpg');
@@ -24,29 +25,49 @@ function oberflaeche() {
             this.uvs.push(u, w);
         }
     }
+
+    // for (let j = 0; j <= this.detailY; j++) {
+    //     let phi = j * TWO_PI / this.detailY;
+    //     for (let i = 0; i <= this.detailX; i++) {
+    //         let theta = i * PI / this.detailX;
+    //         let r = 1+noise(4*theta, 2*sin(theta)*abs(PI-phi));
+    //         let x = r * sin(theta) * cos(phi);
+    //         let y = r * sin(theta) * sin(phi);
+    //         let z = r * cos(theta);
+    //         let p = new p5.Vector(x, y, z);
+    //         this.vertices.push(p);
+    //         this.uvs.push(x, y);
+
+    //     }
+    // }
+
 }
 
 function draw() {
-    background(100);
-
+    background(0);
+    // ypos += yspeed;
     if (keyIsPressed) {
         if (keyCode == 40) {
-            ypos += 0.1;
+            // yspeed += 0.1;
+            ypos -= 10*cos(angle);
+            xpos -= 10*sin(angle);
         }
         if (keyCode == 38) {
-            ypos -= 0.1;
+            // yspeed -= 0.1;
+            ypos += 10*cos(angle);
+            xpos += 10*sin(angle);
         }
         if (keyCode == 39) {
-            angle += 0.1;
+            angle -= 0.05;
         }
         if (keyCode == 37) {
-            angle -= 0.1;
+            angle += 0.05;
         }
-        if (keyCode == 119) {
-            //zpos += 5;
+        if (keyCode == 101) {
+            xAngle += 0.05;
         }
-        if (keyCode == 115) {
-            //zpos -= 5;
+        if (keyCode == 100) {
+            xAngle -= 0.03;
         }
         if (keyCode == 119) {
             hoehe += 5;
@@ -55,7 +76,7 @@ function draw() {
             hoehe -= 5;
         }
     }
-    camera(0, 600, zpos, 0, 0, 0, 0, 1, 0);
+
     let yoff = 0;
     for (let y = 0; y <= geometry.detailY; y++) {
         let xoff = 0;
@@ -75,20 +96,29 @@ function draw() {
     }
     ambientLight(150);
     directionalLight(255, 255, 255, 0, 0.5, 0.25);
-    push();
-    translate(0, -100 * ypos, hoehe);
+
+    
+    rotateX(PI/3);
+    translate(-xpos, 400-ypos, -hoehe);
     rotateZ(angle);
+    rotateX(xAngle);
+    translate(xpos, -400+ypos, hoehe);
+    translate(0,0,hoehe);
+    let tx = cos(angle) * xpos + sin(angle) * ypos;
+    let ty = -sin(angle) * xpos + cos(angle) * ypos;
+    translate(tx, ty, 0);
+    // translate(0,-2*ypos,0);
+
     push();
-    translate(-200, - 600, 200);
+    translate(0, -2000, 0);
     noStroke();
     texture(img1);
-    sphere(100);
+    sphere(200);
     pop();
+
     texture(img2);
-   
     geometry.computeFaces().computeNormals();
     canvas.createBuffers("!", geometry);
-    // render the geometry
-    canvas.drawBuffersScaled("!", 2000, 2000, 500);
-    pop();
+    canvas.drawBuffersScaled("!", 2000, 2000, 1000);
+
 }
