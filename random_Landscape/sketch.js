@@ -30,13 +30,13 @@ function oberflaeche() {
         let phi = j * TWO_PI / this.detailY;
         for (let i = 0; i <= this.detailX; i++) {
             let theta = i * PI / this.detailX;
-            let r = 1+noise(4*theta, 4*sin(theta)*abs(PI-phi));
+            let r = 1;// + noise(4 * theta, 4 * sin(theta) * abs(PI - phi));
             let x = r * sin(theta) * cos(phi);
             let y = r * sin(theta) * sin(phi);
             let z = r * cos(theta);
             let p = new p5.Vector(x, y, z);
             this.vertices.push(p);
-            this.uvs.push(x, y);
+            this.uvs.push(i/this.detailX, j/this.detailY);
 
         }
     }
@@ -94,12 +94,13 @@ function draw() {
 
     //     }
     // }
+
     ambientLight(150);
     directionalLight(255, 255, 255, 0, 0.5, 0.25);
 
-    translate(0, ypos, zpos+400);
+    translate(0, ypos, zpos + 400);
     rotateX(-xAngle);
-    translate(0, -ypos, -zpos-400);
+    translate(0, -ypos, -zpos - 400);
     rotateX(xAngle);
     translate(0, -ypos, -zpos);
     rotateX(-xAngle);
@@ -117,7 +118,7 @@ function draw() {
     texture(img1);
     sphere(200);
     pop();
-
+    
     texture(img2);
     geometry.computeFaces().computeNormals();
     canvas.createBuffers("!", geometry);
