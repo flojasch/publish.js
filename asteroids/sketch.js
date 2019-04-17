@@ -1,35 +1,101 @@
 let canvas;
 let geometry;
+let asteroids = [];
+let speed = 0;
+let ypos = 0;
+let xpos = 0;
+let angle = 0;
+let xAngle = -1.43;
+let zpos = 0;
 
 function setup() {
   img1 = loadImage('mercury.jpg');
   canvas = createCanvas(windowWidth, windowHeight, WEBGL);
-  a1=new Asteroid(new p5.Vector(200,150,0),100);
-  a2=new Asteroid(new p5.Vector(-200,0,-500),50);
+  text = createP();
+  text.position(20, 20);
+  text.style('font-size', '160%');
+  text.style("color", "#FFFFFF");
+  for (let i = 0; i < 2; ++i) {
+    let x = (random() * width - width / 2) * i;
+    let y = (random() * height - height / 2) * i;
+    let a = new Asteroid(createVector(x, -1000 - i * 3000, height/2+y), 200)
+    asteroids.push(a);
+  }
 }
 
 function draw() {
   background(0);
-  a1.update();
-  a1.show();
-  a2.update();
-  a2.show();
+  text.html('speed: '+ speed);
+  updatePlayer();
+  for (let i = 0; i < asteroids.length; i++) {
+    asteroids[i].update();
+    asteroids[i].show();
+  }
+
+}
+
+function updatePlayer() {
+  ypos += +speed * sin(xAngle) * cos(angle);
+  xpos += -speed * sin(xAngle) * sin(angle);
+  zpos += -speed * cos(xAngle);
+
+  if (keyIsPressed) {
+    if (keyCode == 101) {
+      speed += 1;
+    }
+    if (keyCode == 100) {
+      speed -= 1;
+
+    }
+    if (keyCode == 39) {
+      angle += 0.05;
+    }
+    if (keyCode == 37) {
+      angle -= 0.05;
+    }
+    if (keyCode == 40) {
+      xAngle -= 0.05;
+    }
+    if (keyCode == 38) {
+      xAngle += 0.03;
+    }
+    if (keyCode == 119) {
+      zpos += 5;
+    }
+    if (keyCode == 115) {
+      zpos -= 5;
+    }
+  }
+  translate(0, ypos, zpos + 400);
+  rotateX(-xAngle);
+  translate(0, -ypos, -zpos - 400);
+  rotateX(xAngle);
+  translate(0, -ypos, -zpos);
+  rotateX(-xAngle);
+
+  translate(xpos, 400 + ypos, 0);
+  rotateZ(-angle);
+  translate(-xpos, -400 - ypos, 0);
+  rotateZ(angle);
+  translate(-xpos, -ypos, 0);
+  rotateZ(-angle);
+
 }
 
 class Asteroid {
-  constructor(pos,size) {
+  constructor(pos, size) {
     this.size = size;
     this.geometry = icosphere(5);
-    this.pos =pos;
+    this.pos = pos;
   }
   show() {
     texture(img1)
     ambientLight(100);
     directionalLight(255, 120, 120, 0, 0.5, 0.25);
     push();
-    // rotateX(millis() / 1000);
-    // rotateY(millis() / 2000);
     translate(this.pos);
+    rotateX(millis() / 1000);
+    rotateY(millis() / 2000);
     this.geometry.computeNormals();
     canvas.createBuffers("!", this.geometry);
     canvas.drawBuffersScaled("!", this.size, this.size, this.size);
