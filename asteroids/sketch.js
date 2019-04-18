@@ -1,6 +1,7 @@
 let canvas;
 let geometry;
 let asteroids = [];
+let planets = [];
 let speed = 0;
 let ypos = 0;
 let xpos = 0;
@@ -10,42 +11,65 @@ let zpos = 0;
 
 function setup() {
   img1 = loadImage('mercury.jpg');
+  jimg = loadImage('jupitermap.jpg');
+  earthimg = loadImage('earth.jpg');
+  sun = loadImage('sun.jpg');
   canvas = createCanvas(windowWidth, windowHeight, WEBGL);
   text = createP();
   text.position(20, 20);
   text.style('font-size', '160%');
   text.style("color", "#FFFFFF");
-  for (let i = 0; i < 2; ++i) {
-    let x = (random() * width - width / 2) * i;
-    let y = (random() * height - height / 2) * i;
-    let a = new Asteroid(createVector(x, -1000 - i * 3000, height/2+y), 200)
-    asteroids.push(a);
-  }
+  asteroids.push(createAsteroid(1000));
+  asteroids.push(createAsteroid(3500));
+  let p = new Planet(createVector(-2000, -4000, 1000), 500, jimg);
+  planets.push(p);
+  p = new Planet(createVector(2000, -4000, 1000), 200, earthimg);
+  planets.push(p);
+  ambientLight(100);
+  directionalLight(255, 120, 120, 0, 0.5, 0.25);
+  directionalLight(255, 120, 120, 0, 0.5, 0.25);
+  directionalLight(255, 120, 120, 0, 0.5, 0.25);
+}
+
+function createAsteroid(dist) {
+  let x = (random() * width - width / 2) * dist / 1000;
+  let y = (random() * height - height / 2) * dist / 1000;
+  return new Asteroid(createVector(x, -1000 - dist, height / 2 + y), 200);
 }
 
 function draw() {
   background(0);
-  text.html('speed: '+ speed);
+  text.html('speed: ' + speed);
   updatePlayer();
+
+  updateAsteroids();
   for (let i = 0; i < asteroids.length; i++) {
     asteroids[i].update();
     asteroids[i].show();
   }
+  for (let i = 0; i < planets.length; i++) {
+    planets[i].update();
+    planets[i].show();
+  }
 
 }
 
-function updatePlayer() {
-  ypos += +speed * sin(xAngle) * cos(angle);
-  xpos += -speed * sin(xAngle) * sin(angle);
-  zpos += -speed * cos(xAngle);
+function updateAsteroids() {
+  for (let i = 0; i < asteroids.length; i++) {
+    if (asteroids[i].pos.y > 0) {
+      asteroids.splice(i, 1);
+      asteroids.push(createAsteroid(3000));
+    }
+  }
+}
 
+function updatePlayer() {
   if (keyIsPressed) {
     if (keyCode == 101) {
       speed += 1;
     }
     if (keyCode == 100) {
       speed -= 1;
-
     }
     if (keyCode == 39) {
       angle += 0.05;
@@ -82,6 +106,27 @@ function updatePlayer() {
 
 }
 
+class Planet {
+  constructor(pos, size, image) {
+    this.pos = pos;
+    this.img = image;
+    this.size = size;
+  }
+  show() {
+    push();
+    translate(this.pos);
+    rotateX(1.43);
+    rotateY(millis() / 2000);
+    noStroke();
+    texture(this.img);
+    sphere(this.size);
+    pop();
+  }
+  update() {
+    // this.pos.sub(createVector(-speed * sin(xAngle) * sin(angle),speed * sin(xAngle) * cos(angle),-speed * cos(xAngle)));  
+  }
+}
+
 class Asteroid {
   constructor(pos, size) {
     this.size = size;
@@ -90,8 +135,7 @@ class Asteroid {
   }
   show() {
     texture(img1)
-    ambientLight(100);
-    directionalLight(255, 120, 120, 0, 0.5, 0.25);
+
     push();
     translate(this.pos);
     rotateX(millis() / 1000);
@@ -102,6 +146,7 @@ class Asteroid {
     pop();
   }
   update() {
+    this.pos.sub(createVector(-speed * sin(xAngle) * sin(angle), speed * sin(xAngle) * cos(angle), -speed * cos(xAngle)));
     for (let ii = 0; ii < 10; ii++) {
       let side = p5.Vector.fromAngles(random(TWO_PI), random(PI));
       let amt = random(-1, 1) * random(-1, 1) / 15;
