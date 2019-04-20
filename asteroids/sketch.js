@@ -123,7 +123,7 @@ class Planet {
     pop();
   }
   update() {
-    // this.pos.sub(createVector(-speed * sin(xAngle) * sin(angle),speed * sin(xAngle) * cos(angle),-speed * cos(xAngle)));  
+     this.pos.sub(createVector(-speed * sin(xAngle) * sin(angle),speed * sin(xAngle) * cos(angle),-speed * cos(xAngle)));  
   }
 }
 
@@ -132,6 +132,7 @@ class Asteroid {
     this.size = size;
     this.geometry = icosphere(5);
     this.pos = pos;
+    this.speed=100;
   }
   show() {
     texture(img1)
@@ -146,7 +147,7 @@ class Asteroid {
     pop();
   }
   update() {
-    this.pos.sub(createVector(-speed * sin(xAngle) * sin(angle), speed * sin(xAngle) * cos(angle), -speed * cos(xAngle)));
+    this.pos.sub(createVector(-this.speed * sin(xAngle) * sin(angle), this.speed * sin(xAngle) * cos(angle), -this.speed * cos(xAngle)));
     for (let ii = 0; ii < 10; ii++) {
       let side = p5.Vector.fromAngles(random(TWO_PI), random(PI));
       let amt = random(-1, 1) * random(-1, 1) / 15;
