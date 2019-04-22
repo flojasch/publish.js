@@ -1,18 +1,24 @@
 let canvas;
-let geometry;
+let g;
 let terrain = [];
-let speed = 0;
-let ypos = 800;
+let speed = 10;
+let ypos = 0;
 let xpos = 0;
-let angle = 0;
-let xAngle = -1.43;
-let zpos = 200;
+let zpos = -1200;
+let t = -5;
+let omega;
 
 function setup() {
     canvas = createCanvas(windowWidth, windowHeight, WEBGL);
-    geometry = new p5.Geometry(100, 100, oberflaeche);
+    g = new p5.Geometry(100, 100, oberflaeche);
     img1 = loadImage('mercury.jpg');
     img2 = loadImage('Newtonf.png');
+    
+    // orbitControl();
+}
+
+function orbital(obj) {
+    
 }
 
 function oberflaeche() {
@@ -25,58 +31,73 @@ function oberflaeche() {
     //         this.uvs.push(u, w);
     //     }
     // }
+    for (var i = 0; i <= this.detailY; i++) {
+        var v = i / this.detailY;
+        var phi = Math.PI * v - Math.PI / 2;
+        var cosPhi = Math.cos(phi);
+        var sinPhi = Math.sin(phi);
 
-    for (let j = 0; j <= this.detailY; j++) {
-        let phi = j * TWO_PI / this.detailY;
-        for (let i = 0; i <= this.detailX; i++) {
-            let theta = i * PI / this.detailX;
-            let r = 1;// + noise(4 * theta, 4 * sin(theta) * abs(PI - phi));
-            let x = r * sin(theta) * cos(phi);
-            let y = r * sin(theta) * sin(phi);
-            let z = r * cos(theta);
-            let p = new p5.Vector(x, y, z);
+        for (var j = 0; j <= this.detailX; j++) {
+            var u = j / this.detailX;
+            var theta = 2 * Math.PI * u;
+            var cosTheta = Math.cos(theta);
+            var sinTheta = Math.sin(theta);
+            let psi1 = 2 * Math.cos(2*phi);
+            let psi2 = 1.4;
+            let s = 1 / (1 + exp(-t));
+            let r = pow(psi1 * (1 - s), 2) + pow(psi2 * s, 2) + 2 * psi1 * psi2 * s * (1 - s) * Math.cos(omega*t);
+            // var r = 1+0.5*noise(5 * phi, 5 * cosPhi * abs(PI - theta));
+            var p = new p5.Vector(r * cosPhi * sinTheta, r * sinPhi, r * cosPhi * cosTheta);
             this.vertices.push(p);
-            this.uvs.push(i/this.detailX, j/this.detailY);
-
+            this.vertexNormals.push(p);
+            this.uvs.push(u, v);
         }
     }
 
 }
 
 function draw() {
-    background(0);
-    ypos += -speed * sin(xAngle) * cos(angle);
-    xpos += +speed * sin(xAngle) * sin(angle);
-    zpos += speed * cos(xAngle);
+    background(100);
+    t += 0.02;
+    // orbitControl();
 
     if (keyIsPressed) {
-        if (keyCode == 101) {
-            speed -= 0.1;
-        }
-        if (keyCode == 100) {
-            speed += 0.1;
 
-        }
         if (keyCode == 39) {
-            angle += 0.05;
+            ypos += 10;
         }
         if (keyCode == 37) {
-            angle -= 0.05;
+            ypos -= 10;
         }
         if (keyCode == 40) {
-            xAngle -= 0.05;
+            zpos += 10;
         }
         if (keyCode == 38) {
-            xAngle += 0.03;
+            zpos -= 10;
         }
-        if (keyCode == 119) {
-            zpos += 5;
-        }
-        if (keyCode == 115) {
-            zpos -= 5;
-        }
+
     }
 
+    for (var i = 0; i <= g.detailY; i++) {
+        var v = i / g.detailY;
+        var phi = Math.PI * v - Math.PI / 2;
+        var cosPhi = Math.cos(phi);
+        var sinPhi = Math.sin(phi);
+
+        for (var j = 0; j <= g.detailX; j++) {
+            var u = j / g.detailX;
+            var theta = 2 * Math.PI * u;
+            var cosTheta = Math.cos(theta);
+            var sinTheta = Math.sin(theta);
+            let psi1 = 2 * Math.sin(phi);
+            let psi2 = 1.4;
+            let s = 1 / (1 + exp(-t));
+            let r = pow(psi1 * (1 - s), 2) + pow(psi2 * s, 2) + 2 * psi1 * psi2 * s * (1 - s) * cos(t);
+            // var r = 1+0.5*noise(5 * phi, 5 * cosPhi * abs(PI - theta));
+            let v=createVector(r * cosPhi * sinTheta, r * sinPhi, r * cosPhi * cosTheta);
+            g.vertices[i * (g.detailX + 1) + j] = v;
+        }
+    }
     // let yoff = 0;
     // for (let y = 0; y <= geometry.detailY; y++) {
     //     let xoff = 0;
@@ -95,33 +116,21 @@ function draw() {
     //     }
     // }
 
-    ambientLight(150);
-    directionalLight(255, 255, 255, 0, 0.5, 0.25);
-
-    translate(0, ypos, zpos + 400);
-    rotateX(-xAngle);
-    translate(0, -ypos, -zpos - 400);
-    rotateX(xAngle);
-    translate(0, -ypos, -zpos);
-    rotateX(-xAngle);
-
-    translate(xpos, 400 + ypos, 0);
-    rotateZ(-angle);
-    translate(-xpos, -400 - ypos, 0);
-    rotateZ(angle);
-    translate(-xpos, -ypos, 0);
-    rotateZ(-angle);
+    ambientLight(150,50,50);
+    directionalLight(255, 255,255, 0, 0.5, 0.25);
+    // rotateX(PI / 3);
 
     push();
-    translate(0, -2000, 0);
+    translate(xpos, ypos, zpos);
     noStroke();
-    texture(img1);
-    sphere(200);
+    rotateX(-0.5);
+    // texture(img2);
+    // sphere(200);
+    // rotateY(millis()/2000);
+    // rotateZ(millis() / 2000);
+    // texture(img1);
+    g.computeFaces(); //.computeNormals();
+    canvas.createBuffers("!", g);
+    canvas.drawBuffersScaled("!", 300, 300, 300);
     pop();
-    
-    texture(img2);
-    geometry.computeFaces().computeNormals();
-    canvas.createBuffers("!", geometry);
-    canvas.drawBuffersScaled("!", 200, 200, 200);
-
 }

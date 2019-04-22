@@ -49,7 +49,7 @@ class Cubie {
     stroke(0);
     strokeWeight(6);
     push();
-    translate(this.pos.x, this.pos.y, this.pos.z);
+    translate(this.pos);
     let r = this.len / 2;
 
     // z-fixed
