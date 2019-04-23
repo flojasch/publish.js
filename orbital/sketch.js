@@ -12,7 +12,9 @@ function setup() {
     canvas = createCanvas(windowWidth, windowHeight, WEBGL);
     g = new p5.Geometry(100, 100, oberflaeche);
     omega = TWO_PI;
-    img = loadImage('Newtonf.png');
+    // img = loadImage('Newtonf.png');
+    cam = createCapture(VIDEO);
+    cam.hide();
 }
 
 function oberflaeche() {
@@ -66,11 +68,11 @@ function draw() {
     ambientLight(150, 150, 150);
     directionalLight(255, 255, 255, 0, 0.5, 0.25);
     directionalLight(255, 255, 255, 0, 0.5, 0.25);
-    texture(img);
+    texture(cam);
     translate(xpos, ypos, zpos);
     noStroke();
     rotateX(-0.5);
-    rotateY(PI/2);
+    //rotateY(PI / 2);
     g.computeFaces().computeNormals();
     canvas.createBuffers("!", g);
     canvas.drawBuffersScaled("!", 400, 400, 400);
