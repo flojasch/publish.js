@@ -9,19 +9,19 @@ function keyPressed() {
       move.start();
       break;
     case 'b':
-      move = new Move(0, 0, -1, -1);
-      move.start();
-      break;
-    case 'B':
       move = new Move(0, 0, -1, 1);
       move.start();
       break;
+    case 'B':
+      move = new Move(0, 0, -1, -1);
+      move.start();
+      break;
     case 'u':
-      move = new Move(0, -1, 0, -1);
+      move = new Move(0, -1, 0, 1);
       move.start();
       break;
     case 'U':
-      move = new Move(0, -1, 0, 1);
+      move = new Move(0, -1, 0, -1);
       move.start();
       break;
     case 'd':
@@ -41,11 +41,11 @@ function keyPressed() {
       move.start();
       break;
     case 'r':
-      move = new Move(-1, 0, 0, -1);
+      move = new Move(-1, 0, 0, 1);
       move.start();
       break;
     case 'R':
-      move = new Move(-1, 0, 0, 1);
+      move = new Move(-1, 0, 0, -1);
       move.start();
       break;
   }
