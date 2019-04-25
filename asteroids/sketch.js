@@ -7,16 +7,24 @@ let explosions = [];
 let speed = 0;
 let angle = 0;
 let xAngle;
-let counter;
+let lasersound;
+let bombsound;
 
-function setup() {
-  xAngle = -HALF_PI;
+function preload() {
   img1 = loadImage('mercury.jpg');
   jimg = loadImage('jupitermap.jpg');
   earthimg = loadImage('earth.jpg');
   mars = loadImage('mars.jpg');
   sun = loadImage('sun.jpg');
   expimg = loadImage('explosion.jpg');
+  lasersound = loadSound('laser.wav');
+  bombsound=loadSound('bomb.wav');
+}
+
+
+function setup() {
+  xAngle = -HALF_PI;
+
   canvas = createCanvas(windowWidth, windowHeight, WEBGL);
   text = createP();
   text.position(20, 20);
@@ -88,7 +96,7 @@ function updateAsteroids() {
       if (asteroids[i].hit) {
         asteroids[i].time -= 1;
       }
-      if (asteroids[i].time <0) {
+      if (asteroids[i].time < 0) {
         asteroids.splice(i, 1);
       }
     }
@@ -102,6 +110,7 @@ function updateProjectiles() {
   for (let j = 0; j < asteroids.length; j++) {
     for (let i = 0; i < projectiles.length; i++) {
       if (projectiles[i].hit(asteroids[j])) {
+        bombsound.play();
         explosions.push(new Explosion(projectiles[i].pos));
         projectiles.splice(i, 1);
         asteroids[j].hit = true;
@@ -111,6 +120,7 @@ function updateProjectiles() {
   for (let j = 0; j < planets.length; j++) {
     for (let i = 0; i < projectiles.length; i++) {
       if (projectiles[i].hit(planets[j])) {
+        bombsound.play();
         explosions.push(new Explosion(projectiles[i].pos));
         projectiles.splice(i, 1);
         ++planets[j].hit;
@@ -146,6 +156,7 @@ function updatePlayer() {
     }
     if (key == ' ') {
       projectiles.push(new Projectile());
+      lasersound.play();
     }
   }
   translate(0, 0, 400);
