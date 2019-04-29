@@ -1,11 +1,11 @@
 class Asteroid {
   constructor(pos, size) {
     this.size = size;
-    this.geometry = icosphere(5);
+    this.geometry = this.icosphere(5);
     this.pos = pos;
     this.speed = 30;
-    this.hit=false;
-    this.time=10;
+    this.hit = false;
+    this.time = 10;
   }
   show() {
     texture(img1)
@@ -36,133 +36,133 @@ class Asteroid {
       }
     }
   }
-}
 
-function icosphere(detail) {
-  var g = new p5.Geometry(detail);
+  icosphere(detail) {
+    var g = new p5.Geometry(detail);
 
-  var addVertex = function (p) {
-    p.normalize();
-    g.vertices.push(p);
-    g.vertexNormals.push(p);
+    var addVertex = function (p) {
+      p.normalize();
+      g.vertices.push(p);
+      g.vertexNormals.push(p);
 
-    g.uvs.push([
-      ((Math.atan2(p.x, p.z) / Math.PI + 1) / 2) % 1,
-      Math.acos(-p.y) / Math.PI
-    ]);
-  };
+      g.uvs.push([
+        ((Math.atan2(p.x, p.z) / Math.PI + 1) / 2) % 1,
+        Math.acos(-p.y) / Math.PI
+      ]);
+    };
 
-  var midPointIndexCache = {};
+    var midPointIndexCache = {};
 
-  // return index of point in the middle of p1 and p2
-  var midPoint = function (p1, p2) {
-    var key = p1 < p2 ? p1 + "," + p2 : p2 + "," + p1;
-    var ret = midPointIndexCache[key];
-    if (typeof ret === "undefined") {
-      ret = midPointIndexCache[key] = g.vertices.length;
-      addVertex(p5.Vector.add(g.vertices[p1], g.vertices[p2]));
+    // return index of point in the middle of p1 and p2
+    var midPoint = function (p1, p2) {
+      var key = p1 < p2 ? p1 + "," + p2 : p2 + "," + p1;
+      var ret = midPointIndexCache[key];
+      if (typeof ret === "undefined") {
+        ret = midPointIndexCache[key] = g.vertices.length;
+        addVertex(p5.Vector.add(g.vertices[p1], g.vertices[p2]));
+      }
+      return ret;
+    };
+
+    // golden ratio FTW!
+    var phi = (1 + Math.sqrt(5)) / 2;
+
+    addVertex(new p5.Vector(-1, phi, 0));
+    addVertex(new p5.Vector(1, phi, 0));
+    addVertex(new p5.Vector(-1, -phi, 0));
+    addVertex(new p5.Vector(1, -phi, 0));
+    addVertex(new p5.Vector(0, -1, phi));
+    addVertex(new p5.Vector(0, 1, phi));
+    addVertex(new p5.Vector(0, -1, -phi));
+    addVertex(new p5.Vector(0, 1, -phi));
+    addVertex(new p5.Vector(phi, 0, -1));
+    addVertex(new p5.Vector(phi, 0, 1));
+    addVertex(new p5.Vector(-phi, 0, -1));
+    addVertex(new p5.Vector(-phi, 0, 1));
+
+    var faces = [
+      [0, 5, 11],
+      [0, 1, 5],
+      [0, 7, 1],
+      [0, 10, 7],
+      [0, 11, 10],
+      [1, 9, 5],
+      [5, 4, 11],
+      [11, 2, 10],
+      [10, 6, 7],
+      [7, 8, 1],
+      [3, 4, 9],
+      [3, 2, 4],
+      [3, 6, 2],
+      [3, 8, 6],
+      [3, 9, 8],
+      [4, 5, 9],
+      [2, 11, 4],
+      [6, 10, 2],
+      [8, 7, 6],
+      [9, 1, 8]
+    ];
+
+    for (var ff = 0; ff < faces.length; ff++) {
+      var f = faces[ff];
+      var t = f[0];
+      f[0] = f[1];
+      f[1] = t;
     }
-    return ret;
-  };
 
-  // golden ratio FTW!
-  var phi = (1 + Math.sqrt(5)) / 2;
+    // refine triangles
+    for (var i = 0; i < detail; i++) {
+      var faces2 = [];
+      for (var iTri = 0; iTri < faces.length; iTri++) {
+        var tri = faces[iTri];
 
-  addVertex(new p5.Vector(-1, phi, 0));
-  addVertex(new p5.Vector(1, phi, 0));
-  addVertex(new p5.Vector(-1, -phi, 0));
-  addVertex(new p5.Vector(1, -phi, 0));
-  addVertex(new p5.Vector(0, -1, phi));
-  addVertex(new p5.Vector(0, 1, phi));
-  addVertex(new p5.Vector(0, -1, -phi));
-  addVertex(new p5.Vector(0, 1, -phi));
-  addVertex(new p5.Vector(phi, 0, -1));
-  addVertex(new p5.Vector(phi, 0, 1));
-  addVertex(new p5.Vector(-phi, 0, -1));
-  addVertex(new p5.Vector(-phi, 0, 1));
+        var a = tri[0];
+        var b = tri[1];
+        var c = tri[2];
 
-  var faces = [
-    [0, 5, 11],
-    [0, 1, 5],
-    [0, 7, 1],
-    [0, 10, 7],
-    [0, 11, 10],
-    [1, 9, 5],
-    [5, 4, 11],
-    [11, 2, 10],
-    [10, 6, 7],
-    [7, 8, 1],
-    [3, 4, 9],
-    [3, 2, 4],
-    [3, 6, 2],
-    [3, 8, 6],
-    [3, 9, 8],
-    [4, 5, 9],
-    [2, 11, 4],
-    [6, 10, 2],
-    [8, 7, 6],
-    [9, 1, 8]
-  ];
+        // replace triangle by 4 triangles
+        var ab = midPoint(a, b);
+        var bc = midPoint(b, c);
+        var ca = midPoint(c, a);
 
-  for (var ff = 0; ff < faces.length; ff++) {
-    var f = faces[ff];
-    var t = f[0];
-    f[0] = f[1];
-    f[1] = t;
-  }
-
-  // refine triangles
-  for (var i = 0; i < detail; i++) {
-    var faces2 = [];
-    for (var iTri = 0; iTri < faces.length; iTri++) {
-      var tri = faces[iTri];
-
-      var a = tri[0];
-      var b = tri[1];
-      var c = tri[2];
-
-      // replace triangle by 4 triangles
-      var ab = midPoint(a, b);
-      var bc = midPoint(b, c);
-      var ca = midPoint(c, a);
-
-      faces2.push([a, ab, ca], [b, bc, ab], [c, ca, bc], [ab, bc, ca]);
+        faces2.push([a, ab, ca], [b, bc, ab], [c, ca, bc], [ab, bc, ca]);
+      }
+      faces = faces2;
     }
-    faces = faces2;
-  }
 
-  var q, iv;
-  for (var fi = 0; fi < faces.length; fi++) {
-    var face = faces[fi];
-    var uv1 = g.uvs[face[0]];
-    var uv2 = g.uvs[face[1]];
-    var uv3 = g.uvs[face[2]];
-    var u1 = uv1[0];
-    var u2 = uv2[0];
-    var u3 = uv3[0];
+    var q, iv;
+    for (var fi = 0; fi < faces.length; fi++) {
+      var face = faces[fi];
+      var uv1 = g.uvs[face[0]];
+      var uv2 = g.uvs[face[1]];
+      var uv3 = g.uvs[face[2]];
+      var u1 = uv1[0];
+      var u2 = uv2[0];
+      var u3 = uv3[0];
 
-    if (
-      (u1 < 0.25 || u2 < 0.25 || u3 < 0.25) &&
-      (u1 > 0.75 || u2 > 0.75 || u3 > 0.75)
-    ) {
+      if (
+        (u1 < 0.25 || u2 < 0.25 || u3 < 0.25) &&
+        (u1 > 0.75 || u2 > 0.75 || u3 > 0.75)
+      ) {
+        for (q = 0; q < 3; q++) {
+          iv = face[q];
+          if (g.uvs[iv][0] === 0) {
+            face[q] = iv;
+          }
+        }
+      }
+
       for (q = 0; q < 3; q++) {
         iv = face[q];
-        if (g.uvs[iv][0] === 0) {
+        var v = g.uvs[face[q]][1];
+        if (v % 1 === 0) {
+          var u = (g.uvs[face[(q + 1) % 3]][0] + g.uvs[face[(q + 2) % 3]][0]) / 2;
           face[q] = iv;
         }
       }
     }
 
-    for (q = 0; q < 3; q++) {
-      iv = face[q];
-      var v = g.uvs[face[q]][1];
-      if (v % 1 === 0) {
-        var u = (g.uvs[face[(q + 1) % 3]][0] + g.uvs[face[(q + 2) % 3]][0]) / 2;
-        face[q] = iv;
-      }
-    }
+    g.faces = faces;
+    return g;
   }
-
-  g.faces = faces;
-  return g;
 }

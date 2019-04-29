@@ -17,8 +17,9 @@ function preload() {
   mars = loadImage('mars.jpg');
   sun = loadImage('sun.jpg');
   expimg = loadImage('explosion.jpg');
+  newtonimg = loadImage('Newtonf.png');
   lasersound = loadSound('laser.wav');
-  bombsound=loadSound('bomb.wav');
+  bombsound = loadSound('bomb.wav');
 }
 
 
@@ -38,13 +39,14 @@ function setup() {
   planets.push(p);
   p = new Planet(createVector(0, -4000, -500), 200, mars);
   planets.push(p);
-  p = new Planet(createVector(4000, 2000, 0), 1000, sun);
-  planets.push(p);
+  // p = new Planet(createVector(4000, 2000, 0), 1000, sun);
+  // planets.push(p);
+  // landscape = new Landscape(createVector(0, -1000, -500));
 
-  ambientLight(100);
-  directionalLight(255, 120, 120, -2, -1, 0);
-  directionalLight(255, 120, 120, -2, -1, 0);
-  directionalLight(255, 120, 120, -2, -1, 0);
+ambientLight(100);
+for(let i=0;i<3;i++){
+  directionalLight(255, 120, 120, -2, -1, -2);
+}
 }
 
 function createAsteroid(dist) {
@@ -84,6 +86,8 @@ function draw() {
       explosions.splice(i, 1);
     }
   }
+//  landscape.update();
+  // landscape.show();
 }
 
 function updateAsteroids() {
