@@ -13,8 +13,8 @@ function setup() {
     g = new p5.Geometry(100, 100, oberflaeche);
     omega = TWO_PI;
     // img = loadImage('Newtonf.png');
-    cam = createCapture(VIDEO);
-    cam.hide();
+    //cam = createCapture(VIDEO);
+    //cam.hide();
 }
 
 function oberflaeche() {
@@ -65,10 +65,10 @@ function draw() {
         }
     }
 
-    ambientLight(150, 150, 150);
-    directionalLight(255, 255, 255, 0, 0.5, 0.25);
-    directionalLight(255, 255, 255, 0, 0.5, 0.25);
-    texture(cam);
+    ambientLight(50, 50, 50);
+    directionalLight(255, 55, 55, 1, 1, -1);
+    // directionalLight(255, 55, 55, 1, 1, -1);
+    //texture(cam);
     translate(xpos, ypos, zpos);
     noStroke();
     rotateX(-0.5);

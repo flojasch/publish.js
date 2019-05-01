@@ -1,0 +1,37 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <style>p.indent{ padding-left: 1.8em }</style>
+  <meta name="viewport" width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0>
+  <style> body {padding: 0; margin: 0;} </style>
+  <script src="addons/p5.min.js"></script>
+  <script src="addons/p5.dom.min.js"></script>
+  <script src="addons/p5.sound.min.js"></script>
+  <script src="Matrix.js"></script>
+  <script src="nn.js"></script>
+  <script src="ga.js"></script>
+  <script src="sketch.js"></script>
+  <script src="bird.js"></script>
+  <script src="gamebird.js"></script>
+  <script src="pipe.js"></script>
+  <script src="playgame.js"></script>
+</head>
+
+<body>
+  <div id="canvascontainer"></div>
+  <p class="indent"> speed: <input id="speedSlider" type="range" min="1" max="100" value="1"> <span id="speed">1</span>
+    <br /> mutation rate: <input id="mutationSlider" type="range" min="0" max="50" value="5"> <span id="mutation">1</span>
+    <br /> selection pressure: <input id="selectionSlider" type="range" min="0" max="10" value="2"> <span id="selection">1</span>
+    <br /> score: <span id="hs">0</span>
+    <br /> high score over sqrt(time): <span id="ahs">0</span>
+  </p>
+  <p>
+    <button id="best">run best so far</button>
+    <button id="play">play game</button>
+  </p>
+
+
+</body>
+
+</html>
