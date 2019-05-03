@@ -1,5 +1,8 @@
 let img;
 let planets = [];
+let yAngle = 0;
+let xAngle = 0;
+let s=1;
 
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
@@ -8,10 +11,10 @@ function setup() {
   for (let i = 0; i < 300; ++i) {
     let x = width * random() - width / 2;
     let y = height * random() - height / 2;
-    let z = width * random()- width/2;
-    let r =createVector(x,y,z);
-    let v =p5.Vector.cross(r,createVector(0,0.0015,0));
-    planets.push(new Planet(100, 15,r , v, img));
+    let z = width * random() - width / 2;
+    let r = createVector(x, y, z);
+    let v = p5.Vector.cross(r, createVector(0, 0.0015, 0));
+    planets.push(new Planet(100, 15, r, v, img));
     //rotateX(-PI/3);
   }
   // let p = new Planet(100, 20, createVector(-width / 2, 0.1, 0), createVector(0, 0.1, 0), img);
@@ -22,7 +25,8 @@ function setup() {
 
 function draw() {
   background(0);
-  orbitControl();
+  rotateX(xAngle);
+  rotateY(yAngle);
   ambientLight(100);
   directionalLight(255, 255, 255, -1, -1, -1);
   // let locX = mouseX - width / 2;
@@ -35,6 +39,26 @@ function draw() {
   for (let i = 0; i < planets.length; i++) {
     planets[i].show();
   }
+  if (keyIsPressed) {
+    if (keyCode == UP_ARROW) {
+      xAngle += 0.01;
+    }
+    if (keyCode == DOWN_ARROW) {
+      xAngle -= 0.01;
+    }
+    if (keyCode == RIGHT_ARROW) {
+      yAngle += 0.01;
+    }
+    if (keyCode == LEFT_ARROW) {
+      yAngle -= 0.01;
+    }
+    if (key == '+') {
+      s *= 1.01;
+    }
+    if (key == '-') {
+      s /= 1.01;
+    }
+  }
 }
 
 class Planet {
@@ -46,15 +70,15 @@ class Planet {
     this.v = v;
   }
 
-  copy(){
-    return new Planet(this.m,this.d,this.r,this.v,img);
+  copy() {
+    return new Planet(this.m, this.d, this.r, this.v, img);
   }
   show() {
     push();
-    translate(this.r.x, this.r.y, this.r.z);
+    translate(s*this.r.x, s*this.r.y, s*this.r.z);
     noStroke();
     texture(this.img);
-    sphere(this.d);
+    sphere(s*this.d);
     pop();
 
   }
@@ -92,9 +116,9 @@ class Planet {
         let fij = p5.Vector.sub(planets[j].r, planets[i].r);
         let dist = fij.mag();
         if (dist < planets[i].d + planets[j].d) {
-          let p1=planets[j].copy();
+          let p1 = planets[j].copy();
           planets.splice(j, 1);
-          let p2=planets[i].copy();
+          let p2 = planets[i].copy();
           planets.splice(i, 1);
           planets.push(Planet.createPlanet(p1, p2));
 
