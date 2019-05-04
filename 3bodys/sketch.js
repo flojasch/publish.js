@@ -1,11 +1,11 @@
 let img;
 let planets = [];
-let button;
-let third = true;
+let third = false;
 let xAngle = 0.5;
 let yAngle = 0;
 let trace = [];
 let showBahn = false;
+let vz = 0.17;
 
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
@@ -21,15 +21,31 @@ function setup() {
   button1 = createButton('Bahn');
   button1.position(100, 20);
   button1.mousePressed(toggleBahn);
+  input = createInput();
+  input.position(150, 20);
+  inputButton = createButton('Submit');
+  inputButton.position(input.x+input.width,input.y);
+  inputButton.mousePressed(setVz);
+  text = createP('Geschwindigkeit der Erde: '+vz);
+  text.position(input.x, 30);
+  text.style("color","#B0B0B0");
   set3Planets();
 
+}
+
+function setVz(){
+  vz=Number(input.value());
+  text.html('Geschwindigkeit der Erde: '+vz);
+  showBahn=true;
+  trace=[];
+  set3Planets();
 }
 
 function set3Planets() {
   planets = [];
   let earth = new Planet(100, 40, createVector(250, 0, 0), createVector(0, -0.05, -0.2), img2);
   planets.push(earth);
-  let mars = new Planet(100, 40, createVector(-250, 0, 0), createVector(0, -0.05, 0.2), img3);
+  let mars = new Planet(100, 40, createVector(-250, 0, 0), createVector(0, -0.05, vz), img3);
   planets.push(mars);
   let mercury = new Planet(100, 40, createVector(0, 250, 0), createVector(0, 0.1, 0), img1);
   planets.push(mercury);
@@ -57,6 +73,7 @@ function togglePlanet() {
 
 function draw() {
   background(0);
+  vz = input.value();
   if (trace.length > 10000) {
     trace = [];
   }

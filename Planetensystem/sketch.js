@@ -2,38 +2,39 @@ let img;
 let planets = [];
 let yAngle = 0;
 let xAngle = 0;
-let s=1;
+let s = 1;
 
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
   img = loadImage('mercury.jpg');
+  sun = loadImage('sun.jpg');
 
   for (let i = 0; i < 300; ++i) {
-    let x = width * random() - width / 2;
-    let y = height * random() - height / 2;
-    let z = width * random() - width / 2;
+    let L = 1000;
+    let x = L * (random() - 0.5);
+    let y = L * (random() - 0.5);
+    let z = L * (random() - 0.5);
     let r = createVector(x, y, z);
-    let v = p5.Vector.cross(r, createVector(0, 0.0015, 0));
+    let v = p5.Vector.cross(r, createVector(0, 0.001, 0));
+    // v.normalize();
     planets.push(new Planet(100, 15, r, v, img));
-    //rotateX(-PI/3);
   }
-  // let p = new Planet(100, 20, createVector(-width / 2, 0.1, 0), createVector(0, 0.1, 0), img);
-  // planets.push(p);
-  // p = new Planet(100, 20, createVector(width/2, 0, 0), createVector(0, 0.1, 0), img);
-  // planets.push(p);
+  text = createP('Number of Planets: ' + planets.length);
+  text.position(10, 10);
+  text.style("color", "#B0B0B0");
+  text.style("font-size", "18pt");
+
 }
 
 function draw() {
   background(0);
+  text.html('Number of Planets: ' + planets.length);
   rotateX(xAngle);
   rotateY(yAngle);
   ambientLight(100);
   directionalLight(255, 255, 255, -1, -1, -1);
-  // let locX = mouseX - width / 2;
-  // let locY = mouseY - height / 2;
-  // camera(locX, locY, (height / 2) / tan(PI / 6), locX, locY, 0, 0, 1, 0);
 
-  for (let j = 0; j < 10; j++) {
+  for (let j = 0; j < 5; j++) {
     Planet.update(planets);
   }
   for (let i = 0; i < planets.length; i++) {
@@ -58,6 +59,16 @@ function draw() {
     if (key == '-') {
       s /= 1.01;
     }
+    if (key == 'e') {
+      for (let i = 0; i < planets.length; i++) {
+        planets[i].move(5);
+      }
+    }
+    if (key == 'd') {
+      for (let i = 0; i < planets.length; i++) {
+        planets[i].move(-5);
+      }
+    }
   }
 }
 
@@ -73,12 +84,21 @@ class Planet {
   copy() {
     return new Planet(this.m, this.d, this.r, this.v, img);
   }
+
+  move(sp) {
+    let x = sp*sin(xAngle) * sin(yAngle);
+    let y = sp*sin(xAngle) * cos(yAngle);
+    let z = sp*cos(xAngle);
+    this.r.add(createVector(x, y, z));
+  }
+ 
   show() {
+
     push();
-    translate(s*this.r.x, s*this.r.y, s*this.r.z);
+    translate(s * this.r.x, s * this.r.y, s * this.r.z);
     noStroke();
     texture(this.img);
-    sphere(s*this.d);
+    sphere(s * this.d);
     pop();
 
   }
@@ -108,6 +128,9 @@ class Planet {
     for (let i = 0; i < planets.length; i++) {
       planets[i].v.add(a[i].mult(0.01));
       planets[i].r.add(planets[i].v);
+      if (planets[i].d > 50) {
+        planets[i].img = sun;
+      }
     }
 
 
