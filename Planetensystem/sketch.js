@@ -2,6 +2,9 @@ let img;
 let planets = [];
 let yAngle = 0;
 let xAngle = 0;
+let x=0;
+let y=0;
+let z=0;
 let s = 1;
 
 function setup() {
@@ -29,47 +32,58 @@ function setup() {
 function draw() {
   background(0);
   text.html('Number of Planets: ' + planets.length);
-  rotateX(xAngle);
-  rotateY(yAngle);
   ambientLight(100);
   directionalLight(255, 255, 255, -1, -1, -1);
-
+  translate(0,0,400);
+  rotateX(xAngle);
+  rotateY(yAngle);
+  translate(0,0,-400);
+  translate(x,y,z);
+  
+  if(keyIsPressed){
+    steering();
+  }
   for (let j = 0; j < 5; j++) {
     Planet.update(planets);
   }
   for (let i = 0; i < planets.length; i++) {
     planets[i].show();
   }
-  if (keyIsPressed) {
-    if (keyCode == UP_ARROW) {
-      xAngle += 0.01;
-    }
-    if (keyCode == DOWN_ARROW) {
-      xAngle -= 0.01;
-    }
-    if (keyCode == RIGHT_ARROW) {
-      yAngle += 0.01;
-    }
-    if (keyCode == LEFT_ARROW) {
-      yAngle -= 0.01;
-    }
-    if (key == '+') {
-      s *= 1.01;
-    }
-    if (key == '-') {
-      s /= 1.01;
-    }
-    if (key == 'e') {
-      for (let i = 0; i < planets.length; i++) {
-        planets[i].move(5);
-      }
-    }
-    if (key == 'd') {
-      for (let i = 0; i < planets.length; i++) {
-        planets[i].move(-5);
-      }
-    }
+
+}
+
+function steering() {
+  if (keyCode == UP_ARROW) {
+    xAngle += 0.01;
   }
+  if (keyCode == DOWN_ARROW) {
+    xAngle -= 0.01;
+  }
+  if (keyCode == RIGHT_ARROW) {
+    yAngle += 0.01;
+  }
+  if (keyCode == LEFT_ARROW) {
+    yAngle -= 0.01;
+  }
+  if (key == '+') {
+    s *= 1.01;
+  }
+  if (key == '-') {
+    s /= 1.01;
+  }
+  if (key == 'e') {
+    newPos(2);
+  }
+  if (key == 'd') {
+    newPos(-2);
+  }
+}
+
+function newPos(incr) {
+  x += incr * sin(-yAngle) * cos(xAngle);
+  y += incr * sin(xAngle);
+  z += incr * cos(yAngle) * cos(xAngle);
+
 }
 
 class Planet {
@@ -85,13 +99,7 @@ class Planet {
     return new Planet(this.m, this.d, this.r, this.v, img);
   }
 
-  move(sp) {
-    let x = sp*sin(xAngle) * sin(yAngle);
-    let y = sp*sin(xAngle) * cos(yAngle);
-    let z = sp*cos(xAngle);
-    this.r.add(createVector(x, y, z));
-  }
- 
+
   show() {
 
     push();
