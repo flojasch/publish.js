@@ -23,7 +23,7 @@ function setup() {
   button.position(20, 20);
   button.mousePressed(erstelleSitzordnung);
   saveButton = createButton('save Image');
-  saveButton.position(200,20);
+  saveButton.position(200, 20);
   saveButton.mousePressed(saveOrdnung);
   tables = [];
   let x = 0;
@@ -44,9 +44,10 @@ function setup() {
   }
 }
 
-function saveOrdnung(){
+function saveOrdnung() {
   saveCanvas(canvas, 'myCanvas', 'jpg');
 }
+
 function mousePressed() {
   if (mouseY > 0) {
     for (let i = 0; i < names.length; i++) {
@@ -71,29 +72,32 @@ function mouseReleased() {
 }
 
 function createTable(x, y, orientation) {
-  if (name == 'none') {
-    let i = floor(random() * names.length / 2) * 2;
-    name = names.splice(i, 1);
-    tables.push(new Table(x, y, name, orientation));
-    name = names.splice(i, 1);
-  } else {
-    tables.push(new Table(x, y, name, orientation));
-    name = 'none';
-  }
+  // if (name == 'none') {
+  //   let i = floor(random() * names.length / 2) * 2;
+  //   name = names.splice(i, 1);
+  //   tables.push(new Table(x, y, name, orientation));
+  //   name = names.splice(i, 1);
+  // } else {
+  //   tables.push(new Table(x, y, name, orientation));
+  //   name = 'none';
+  // }
+  let i = floor(random() * names.length);
+  name = names.splice(i, 1);
+  tables.push(new Table(x, y, name, orientation));
 }
 
 function createList() {
   list = [];
   while (tables.length > 0) {
     list.push(tables[0].name);
-    let y=tables[0].y;
-    let x=tables[0].x;
-    tables.splice(0,1);
+    let y = tables[0].y;
+    let x = tables[0].x;
+    tables.splice(0, 1);
     for (let j = 0; j < tables.length; j++) {
       if (abs(y - tables[j].y) < tableHeight + 10 &&
         abs(x - tables[j].x) < 10) {
         list.push(tables[j].name);
-        tables.splice(j,1);
+        tables.splice(j, 1);
         break;
       }
     }
@@ -102,14 +106,19 @@ function createList() {
 }
 
 function erstelleSitzordnung() {
-  if (noList) {
-    createList();
-  }
+  // if (noList) {
+  //   createList();
+  // }
   tables = [];
-  names = [];
-  for (let i = 0; i < list.length; i++) {
-    names[i] = list[i];
-  }
+  names = ['Tizian', 'Leonie', 'Jana', 'Anton', 'Anna',
+    'Smilla', 'Felix', 'Amelie', 'Artur', 'Matilda', 'Lucy', 'Mara', 'Lilian',
+    'Ida', 'Isabel', 'Max', 'Noah', 'Paolo', 'Jan Luca', 'Meik', 'Jonas',
+    'Dorentina', 'Alina', 'Darwin', 'Lennard', 'Medin'
+  ];
+  // names = [];
+  // for (let i = 0; i < list.length; i++) {
+  //   names[i] = list[i];
+  // }
   //Mittelreihen
   let x = xAbstand + tableHeight;
   let y = yAbstand + tableHeight + 2 * tableWidth;
