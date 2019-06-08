@@ -99,7 +99,6 @@ class Planet {
     return new Planet(this.m, this.d, this.r, this.v, img);
   }
 
-
   show() {
 
     push();
