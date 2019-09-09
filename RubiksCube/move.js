@@ -1,44 +1,35 @@
 class Move {
-  
-  constructor(x, y, z, dir) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
+
+  constructor(omega, dir) {
+    this.omega = omega;
     this.dir = dir;
-  }
-
-  copy() {
-    return new Move(this.x, this.y, this.z, this.dir);
-  }
-
-  reverse() {
-    this.dir *= -1;
+    this.amimating = false;
+    this.finished = true;
   }
 
   start() {
-    animating = true;
-    finished = false;
-    this.angle = 0;
+    this.animating = true;
+    angle = 0;
+    this.finished = false;
   }
-
-  finished() {
-    return finished;
+  copy() {
+    return new Move(this.omega, this.dir);
   }
 
   update() {
-    if (animating) {
-      angle += this.dir * speed;
-      if (abs(angle) > HALF_PI) {
+    if (this.animating) {
+      angle += this.dir / abs(this.dir) * speed;
+      if (abs(angle) > HALF_PI * abs(this.dir)) {
         angle = 0;
-        animating = false;
-        finished = true;
-        if (abs(this.z) > 0) {
-          turnZ(this.z, this.dir);
-        } else if (abs(this.x) > 0) {
-          turnX(this.x, this.dir);
-        } else if (abs(this.y) > 0) {
-          turnY(this.y, this.dir);
+        this.animating = false;
+        if (abs(this.omega[2]) > 0) {
+          cube.turn(2,this.omega[2], this.dir);
+        } else if (abs(this.omega[0]) > 0) {
+          cube.turn(0,this.omega[0], this.dir);
+        } else if (abs(this.omega[1]) > 0) {
+          cube.turn(1,this.omega[1], this.dir);
         }
+        this.finished = true;
       }
     }
   }
