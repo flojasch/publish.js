@@ -2,11 +2,12 @@ let slider;
 let button;
 let update = true;
 let R = 50;
-let arrows = [];
+let rArrows = [];
+let lArrows = [];
 let alpha;
 let showheights = false;
 let w;
-let alphag=0;
+let alphag = 0;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -21,8 +22,8 @@ function setup() {
   let alpha = 0;
   for (let x = 0; x < width; x += 50) {
     alpha += PI / 10;
-    arrows.push(new Arrow(x, 200, alpha));
-    arrows.push(new Arrow(x, 400, -alpha));
+    rArrows.push(new Arrow(x, 200, alpha));
+    lArrows.push(new Arrow(x, 400, -alpha));
     // arrows.push(new Arrow(x, 600, alpha));
     // arrows.push(new Arrow(x + R*cos(alpha),600+R*sin(alpha),-alpha));
   }
@@ -43,8 +44,31 @@ function draw() {
   if (update) {
     alphag += w;
   }
-  for (let k = 0; k < arrows.length; k++) {
-    arrows[k].show();
+  for (let k = 0; k < rArrows.length; k++) {
+    rArrows[k].show();
+    lArrows[k].show();
+  }
+  translate(0, 400);
+  for (let k = 0; k < rArrows.length; k++) {
+    showh = showheights;
+    showheights = false;
+    rArrows[k].show();
+    push();
+    let phi = rArrows[k].alpha + alphag;
+    translate(R * cos(phi), R * sin(phi) - 200);
+    lArrows[k].show();
+    pop();
+    showheights = showh;
+    if (showheights) {
+      fill(255,0,0);
+      let phi1 = rArrows[k].alpha + alphag;
+      let phi2 = lArrows[k].alpha + alphag;
+      let x=rArrows[k].tx;
+      let y=rArrows[k].ty;
+      circle(x,y+ R * sin(phi1) + R * sin(phi2),5);
+      line(x,y+R*sin(phi1)+R*sin(phi2),x,y);
+      line(x+R*cos(phi1)+R*cos(phi2),y+R*sin(phi1)+R*sin(phi2),x,y+R*sin(phi1)+R*sin(phi2));
+    }
   }
 }
 
@@ -61,7 +85,7 @@ class Arrow {
     push();
     translate(this.tx, this.ty);
     fill(255, 0, 0);
-    let alpha=this.alpha+alphag;
+    let alpha = this.alpha + alphag;
     if (showheights) {
       circle(0, R * sin(alpha), 5);
       line(0, R * sin(alpha), R * cos(alpha), R * sin(alpha));
