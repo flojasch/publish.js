@@ -1,13 +1,14 @@
 let button;
 let lButton;
-let pButton;
 let charges = [];
 let arrow;
 let feldlinien = true;
 let ladung = 1;
-let canvas;
+let pg;
 let g;
-let potential = false;
+let ypos = -10;
+let xangle = 1;
+let yangle = 0;
 
 
 function setup() {
@@ -18,26 +19,14 @@ function setup() {
   lButton = createButton('Ladung: +');
   lButton.position(150, 50);
   lButton.mousePressed(plusminus);
-  pButton = createButton('Potential');
-  pButton.position(250, 50);
-  pButton.mousePressed(showPotential);
   strokeWeight(2);
-}
-
-function showPotential() {
-  potential = !potential;
-  if (potential) {
-    canvas = createCanvas(windowWidth, windowHeight, WEBGL);
-    g = new p5.Geometry(200, 200, oberflaeche);
-    camera(0, -600, 300, 0, 0, 0, 0, -1, 0);
-    calcPotential();
-  } else {
-    // canvas=createCanvas(windowWidth,windowHeight);
-  }
+  g = new p5.Geometry(200, 200, oberflaeche);
+  pg = createGraphics(windowWidth / 2, windowHeight, WEBGL);
+  pg.background(100);
 }
 
 function calcPotential() {
-  let inkr = width / g.detailX;
+  let inkr = width / (2 * g.detailX);
   for (let j = 0; j <= g.detailY; j++) {
     for (let i = 0; i <= g.detailX; i++) {
       let h = 0;
@@ -66,40 +55,66 @@ function plusminus() {
 }
 
 function mousePressed() {
-  if (mouseY > 60)
+  if (mouseY > 70) {
     charges.push(new Charge(mouseX, mouseY, ladung));
+    calcPotential();
+    drawGraphics();
+  }
 }
 
 function draw() {
   background(200);
-  if (!potential) {
-    let rArrow = new Arrow(mouseX, mouseY, 0, 0);
-    for (let charge of charges) {
-      charge.show();
-      let x = (mouseX - charge.x) * 0.0001 * charge.charge;
-      let y = (mouseY - charge.y) * 0.0001 * charge.charge;
-      let r = x * x + y * y;
-      // r = r * sqrt(r);
-      arrow = new Arrow(mouseX, mouseY, x / r, y / r);
-      arrow.show(color(0, 0, 0));
-      rArrow.add(arrow);
-    }
-    rArrow.show(color(255, 0, 0));
-    if (feldlinien) {
-      showfeldlinien();
-    }
-  } else {
-    // translate(0, -height/2, 0);
-    // rotateX(-PI / 3);
-    fill(255);
-    noStroke();
-    directionalLight(66, 140, 244, 0, 1, 0.1);
-    // ambientLight(50,50,50);
-    // directionalLight(66, 140, 244, -1,-1,-1);
-    g.computeFaces().computeNormals();
-    canvas.createBuffers("!", g);
-    canvas.drawBuffersScaled("!", 1000, 1000, 500);
+  if (feldlinien) {
+    showfeldlinien();
   }
+  let rArrow = new Arrow(mouseX, mouseY, 0, 0);
+  for (let charge of charges) {
+    charge.show();
+    let x = (mouseX - charge.x) * 0.0001 * charge.charge;
+    let y = (mouseY - charge.y) * 0.0001 * charge.charge;
+    let r = x * x + y * y;
+    arrow = new Arrow(mouseX, mouseY, x / r, y / r);
+    arrow.show(color(0, 0, 0));
+    rArrow.add(arrow);
+  }
+  rArrow.show(color(255, 0, 0));
+  
+  if (keyIsPressed) {
+    if (keyCode == UP_ARROW) {
+      xangle += 0.1;
+    }
+    if (keyCode == DOWN_ARROW) {
+      xangle -= 0.1;
+    }
+    if (keyCode == RIGHT_ARROW) {
+      yangle += 0.1;
+    }
+    if (keyCode == LEFT_ARROW) {
+      yangle -= 0.1;
+    }
+    if (key == 'w') {
+      ypos += 10;
+    }
+    if (key == 's') {
+      ypos -= 10;
+    }
+    drawGraphics();
+  }
+  image(pg, width / 2, 0);
+}
+
+function drawGraphics() {
+  pg = createGraphics(windowWidth / 2, windowHeight, WEBGL);
+  pg.background(100);
+  pg.fill(255);
+  pg.noStroke();
+  pg.directionalLight(66, 140, 244, 0, 1, 0.1);
+  pg.translate(0, ypos, 0);
+  pg.rotateY(yangle);
+  pg.rotateX(xangle);
+  g.computeFaces().computeNormals();
+  pg._renderer.createBuffers("!", g);
+  pg._renderer.drawBuffersScaled("!", 1000, 1000, 200);
 }
 
 function oberflaeche() {
