@@ -1,8 +1,10 @@
 let button;
 let lButton;
+let pButton;
 let charges = [];
 let arrow;
 let feldlinien = true;
+let potentiallinien = false;
 let ladung = 1;
 let pg;
 let g;
@@ -16,6 +18,9 @@ function setup() {
   button = createButton('Feldlinien');
   button.position(50, 50);
   button.mousePressed(onoff);
+  pButton = createButton('Potentiallinien');
+  pButton.position(250, 50);
+  pButton.mousePressed(togglePotential);
   lButton = createButton('Ladung: +');
   lButton.position(150, 50);
   lButton.mousePressed(plusminus);
@@ -42,6 +47,40 @@ function calcPotential() {
   }
 }
 
+function togglePotential() {
+  potentiallinien = !potentiallinien;
+  if (potentiallinien) {
+    updatePotential();
+  }
+}
+
+function updatePotential() {
+  loadPixels();
+  for (let j = 0; j < height; j++) {
+    for (let i = 0; i < width / 2; i++) {
+      let h = 0;
+      for (let charge of charges) {
+        let x = (charge.x - i);
+        let y = (charge.y - j);
+        let r = x * x + y * y;
+        h += charge.charge * (0.1 * log(r) - 1);
+      }
+      let pix = (i + j * width) * 4;
+      pixels[pix + 3] = 255;
+      if (sin(h * 30) > 0) {
+        pixels[pix] = 100;
+        pixels[pix + 1] = 100;
+        pixels[pix + 2] = 100;
+      } else {
+        pixels[pix] = 200;
+        pixels[pix + 1] = 200;
+        pixels[pix + 2] = 200;
+      }
+    }
+  }
+  updatePixels();
+}
+
 function onoff() {
   feldlinien = !feldlinien;
 }
@@ -59,11 +98,15 @@ function mousePressed() {
     charges.push(new Charge(mouseX, mouseY, ladung));
     calcPotential();
     drawGraphics();
+    updatePotential();
   }
 }
 
 function draw() {
   background(200);
+  if (potentiallinien) {
+    updatePixels();
+  }
   if (feldlinien) {
     showfeldlinien();
   }
@@ -78,7 +121,7 @@ function draw() {
     rArrow.add(arrow);
   }
   rArrow.show(color(255, 0, 0));
-  
+
   if (keyIsPressed) {
     if (keyCode == UP_ARROW) {
       xangle += 0.1;
