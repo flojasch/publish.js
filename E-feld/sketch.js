@@ -103,6 +103,12 @@ function mousePressed() {
 }
 
 function draw() {
+  if(width!=windowWidth||height!=windowHeight){
+    setup();
+    calcPotential();
+    drawGraphics();
+    updatePotential();
+  }
   background(200);
   if (potentiallinien) {
     updatePixels();
