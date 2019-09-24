@@ -3,10 +3,10 @@ let tableWidth = 100;
 let tableHeight = 50;
 let xAbstand = 50;
 let yAbstand = 10;
-let names = ['Tizian', 'Leonie', 'Jana', 'Anton', 'Anna',
+let names = ['Tizian', 'Leonie', 'Anna B', 'Anton', 'Anna',
   'Smilla', 'Felix', 'Amelie', 'Artur', 'Matilda', 'Lucy', 'Mara', 'Lilian',
   'Ida', 'Isabel', 'Max', 'Noah', 'Paolo', 'Jan Luca', 'Meik', 'Jonas',
-  'Dorentina', 'Alina', 'Darwin', 'Lennard', 'Medin'
+  'Amy', 'Alina', 'Darwin', 'Lennard', 'Medin'
 ];
 let name = 'none';
 let picked = 0;
@@ -110,10 +110,10 @@ function erstelleSitzordnung() {
   //   createList();
   // }
   tables = [];
-  names = ['Tizian', 'Leonie', 'Jana', 'Anton', 'Anna',
+  names = ['Tizian', 'Leonie', 'Anna B', 'Anton', 'Anna',
     'Smilla', 'Felix', 'Amelie', 'Artur', 'Matilda', 'Lucy', 'Mara', 'Lilian',
     'Ida', 'Isabel', 'Max', 'Noah', 'Paolo', 'Jan Luca', 'Meik', 'Jonas',
-    'Dorentina', 'Alina', 'Darwin', 'Lennard', 'Medin'
+    'Amy', 'Alina', 'Darwin', 'Lennard', 'Medin'
   ];
   // names = [];
   // for (let i = 0; i < list.length; i++) {
