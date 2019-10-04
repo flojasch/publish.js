@@ -1,15 +1,12 @@
 let scale;
-let t;
+let t = 0;
 let xext = 30;
-let charges;
+let charges = [];
 let c = 0.2;
-let lines;
+let lines = [];
 let ln = 10;
 
 function setup() {
-  charges = [];
-  lines = [];
-  t = 0;
   createCanvas(windowWidth, windowHeight);
   strokeWeight(1);
   scale = width / xext;
@@ -32,19 +29,20 @@ function draw() {
   translate(width / 2, height / 2);
   // let x = (mouseX - width / 2) / scale;
   // let y = (mouseY - height / 2) / scale;
-  charges[0].x = 0;
+  charges[0].x = cos(t);
   charges[0].y = sin(t);
   charges[1].x = 0;
-  charges[1].y = -charges[0].y;
+  charges[1].y = 0;
   for (let C of charges) C.r0.push(new p5.Vector(C.x, C.y));
   vectors();
   alpha = 0;
   for (let n = 0; n < ln; n++) {
     alpha += TWO_PI / ln;
+    lines[n].x = charges[0].x + 0.1 * cos(alpha);
     lines[n].y = charges[0].y + 0.1 * sin(alpha);
-    if ((t - 0.1) % PI < HALF_PI) lines[n].showcharge();
+    lines[n].showcharge();
   }
-  if ((t + HALF_PI - 0.1) % PI < 0.15) {
+  if ((t + 1.5) % PI < 0.15) {
     for (let n = 0; n < ln; n++) {
       lines.push(new Line(lines[n].xs, 0));
     }
@@ -69,15 +67,15 @@ function draw() {
 
 function vectors() {
   for (let i = 0; i < 50; i++) {
-    //for (let j = 0; j < 50; j++) {
-      let x = i * xext / 50 - xext / 2;
-      let y = 0;//j * xext / 50 - xext / 2;
-      let E = Efeld(x, y);
-      //if (E.mag() < 1) {
-        let arrow = new Arrow(x * scale, y * scale, E.x * scale * 5, E.y * scale * 5);
-        arrow.show(color(255, 0, 0));
-      //}
-    //}
+    for (let j = 0; j < 50; j++) {
+    let x = i * xext / 50 - xext / 2;
+    let y = j * xext / 50 - xext / 2;
+    let E = Efeld(x, y);
+    if (E.mag() < 0.5) {
+      let arrow = new Arrow(x * scale, y * scale, E.x * scale * 5, E.y * scale * 5);
+      arrow.show(color(255, 0, 0));
+    }
+    }
   }
 }
 
