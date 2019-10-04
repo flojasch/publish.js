@@ -1,12 +1,15 @@
 let scale;
-let t = 0;
+let t;
 let xext = 30;
-let charges = [];
+let charges;
 let c = 0.2;
-let lines = [];
+let lines;
 let ln = 10;
 
 function setup() {
+  t = 0;
+  charges = [];
+  lines = [];
   createCanvas(windowWidth, windowHeight);
   strokeWeight(1);
   scale = width / xext;
@@ -27,8 +30,6 @@ function draw() {
   }
   background(200);
   translate(width / 2, height / 2);
-  // let x = (mouseX - width / 2) / scale;
-  // let y = (mouseY - height / 2) / scale;
   charges[0].x = cos(t);
   charges[0].y = sin(t);
   charges[1].x = 0;
@@ -42,9 +43,9 @@ function draw() {
     lines[n].y = charges[0].y + 0.1 * sin(alpha);
     lines[n].showcharge();
   }
-  if ((t + 1.5) % PI < 0.15) {
+  if (abs(t + HALF_PI) % PI < 0.15) {
     for (let n = 0; n < ln; n++) {
-      lines.push(new Line(lines[n].xs, 0));
+      if (abs(lines[n].xs) > 0.05) lines.push(new Line(lines[n].xs, 0));
     }
   }
   for (let n = ln; n < lines.length; n++) {
@@ -68,13 +69,13 @@ function draw() {
 function vectors() {
   for (let i = 0; i < 50; i++) {
     for (let j = 0; j < 50; j++) {
-    let x = i * xext / 50 - xext / 2;
-    let y = j * xext / 50 - xext / 2;
-    let E = Efeld(x, y);
-    if (E.mag() < 0.5) {
-      let arrow = new Arrow(x * scale, y * scale, E.x * scale * 5, E.y * scale * 5);
-      arrow.show(color(255, 0, 0));
-    }
+      let x = i * xext / 50 - xext / 2;
+      let y = j * xext / 50 - xext / 2;
+      let E = Efeld(x, y);
+      if (E.mag() < 0.5) {
+        let arrow = new Arrow(x * scale, y * scale, E.x * scale * 5, E.y * scale * 5);
+        arrow.show(color(255, 0, 0));
+      }
     }
   }
 }
@@ -119,7 +120,7 @@ class Line {
       let xalt, yalt;
       let x = this.x;
       let y = this.y;
-      for (let k = 0; k < 400; k++) {
+      for (let k = 0; k < 600; k++) {
         xalt = x;
         yalt = y;
         let E = Efeld(x, y);
@@ -129,9 +130,6 @@ class Line {
         y += dir * E.y * delta;
         stroke(0, 0, 255);
         line(xalt * scale, yalt * scale, x * scale, y * scale);
-        if (abs(y) < delta) {
-          break;
-        }
       }
     }
   }
