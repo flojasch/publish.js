@@ -4,13 +4,23 @@ let xext = 30;
 let charges;
 let c = 0.2;
 let lines;
-let ln = 10;
+let ln = 16;
+let button;
+let vButton;
+let showVectors = true;
+let fieldlines = true;
 
 function setup() {
   t = 0;
   charges = [];
   lines = [];
   createCanvas(windowWidth, windowHeight);
+  button = createButton('Feldlinien');
+  button.position(50, 50);
+  button.mousePressed(feldlinien);
+  vButton = createButton('E-Feld');
+  vButton.position(150, 50);
+  vButton.mousePressed(toggleVectors);
   strokeWeight(1);
   scale = width / xext;
   charges.push(new Charge(0, 0, 1));
@@ -24,6 +34,14 @@ function setup() {
   }
 }
 
+function feldlinien() {
+  fieldlines = !fieldlines;
+}
+
+function toggleVectors() {
+  showVectors = !showVectors;
+}
+
 function draw() {
   if (width != windowWidth || height != windowHeight) {
     setup();
@@ -35,13 +53,13 @@ function draw() {
   charges[1].x = 0;
   charges[1].y = 0;
   for (let C of charges) C.r0.push(new p5.Vector(C.x, C.y));
-  vectors();
+  if(showVectors) vectors();
   alpha = 0;
   for (let n = 0; n < ln; n++) {
     alpha += TWO_PI / ln;
     lines[n].x = charges[0].x + 0.1 * cos(alpha);
     lines[n].y = charges[0].y + 0.1 * sin(alpha);
-    lines[n].showcharge();
+    if(fieldlines) lines[n].showcharge();
   }
   if (abs(t + HALF_PI) % PI < 0.15) {
     for (let n = 0; n < ln; n++) {
@@ -54,7 +72,7 @@ function draw() {
     if (abs(lines[n].x) > xext * 0.75)
       lines.splice(n, 1);
     else
-      lines[n].show();
+      if(fieldlines) lines[n].show();
   }
   for (let C of charges) C.show();
 

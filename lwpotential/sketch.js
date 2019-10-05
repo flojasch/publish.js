@@ -5,11 +5,21 @@ let charges;
 let c = 0.2;
 let lines;
 let ln = 10;
+let button;
+let vButton;
+let showVectors = true;
+let fieldlines = true;
 
 function setup() {
   charges = [];
   lines = [];
   t = 0;
+  button = createButton('Feldlinien');
+  button.position(50, 50);
+  button.mousePressed(feldlinien);
+  vButton = createButton('E-Feld');
+  vButton.position(150, 50);
+  vButton.mousePressed(toggleVectors);
   createCanvas(windowWidth, windowHeight);
   strokeWeight(1);
   scale = width / xext;
@@ -24,6 +34,14 @@ function setup() {
   }
 }
 
+function feldlinien() {
+  fieldlines = !fieldlines;
+}
+
+function toggleVectors() {
+  showVectors = !showVectors;
+}
+
 function draw() {
   if (width != windowWidth || height != windowHeight) {
     setup();
@@ -35,14 +53,14 @@ function draw() {
   charges[0].x = 0;
   charges[0].y = sin(t);
   charges[1].x = 0;
-  charges[1].y = -charges[0].y;
+  charges[1].y = -sin(t);
   for (let C of charges) C.r0.push(new p5.Vector(C.x, C.y));
   vectors();
   alpha = 0;
   for (let n = 0; n < ln; n++) {
     alpha += TWO_PI / ln;
     lines[n].y = charges[0].y + 0.1 * sin(alpha);
-    if ((t - 0.1) % PI < HALF_PI) lines[n].showcharge();
+    if ((t - 0.1) % PI < HALF_PI && fieldlines) lines[n].showcharge();
   }
   if ((t + HALF_PI - 0.1) % PI < 0.15) {
     for (let n = 0; n < ln; n++) {
@@ -52,10 +70,11 @@ function draw() {
   for (let n = ln; n < lines.length; n++) {
     let sign = Math.sign(lines[n].x);
     lines[n].x += sign * c;
-    if (abs(lines[n].x) > xext * 0.75)
+    if (abs(lines[n].x) > xext * 0.75) {
       lines.splice(n, 1);
-    else
-      lines[n].show();
+    } else {
+      if (fieldlines) lines[n].show();
+    }
   }
   for (let C of charges) C.show();
 
@@ -69,15 +88,23 @@ function draw() {
 
 function vectors() {
   for (let i = 0; i < 50; i++) {
-    //for (let j = 0; j < 50; j++) {
+    if (showVectors) {
+      for (let j = 0; j < 50; j++) {
+        let x = i * xext / 50 - xext / 2;
+        let y = j * xext / 50 - xext / 2;
+        let E = Efeld(x, y);
+        if (E.mag() < 1) {
+          let arrow = new Arrow(x * scale, y * scale, E.x * scale * 5, E.y * scale * 5);
+          arrow.show(color(255, 0, 0));
+        }
+      }
+    } else {
       let x = i * xext / 50 - xext / 2;
-      let y = 0;//j * xext / 50 - xext / 2;
+      let y = 0;
       let E = Efeld(x, y);
-      //if (E.mag() < 1) {
-        let arrow = new Arrow(x * scale, y * scale, E.x * scale * 5, E.y * scale * 5);
-        arrow.show(color(255, 0, 0));
-      //}
-    //}
+      let arrow = new Arrow(x * scale, y * scale, E.x * scale * 5, E.y * scale * 5);
+      arrow.show(color(255, 0, 0));
+    }
   }
 }
 
@@ -100,7 +127,7 @@ class Line {
     let xalt, yalt;
     let x = this.x;
     let y = this.y;
-    for (let k = 0; k < 200; k++) {
+    for (let k = 0; k < 400; k++) {
       xalt = x;
       yalt = y;
       let E = Efeld(x, y);
