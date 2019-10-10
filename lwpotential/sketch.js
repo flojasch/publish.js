@@ -9,18 +9,26 @@ let button;
 let vButton;
 let showVectors = true;
 let fieldlines = true;
+let slider;
+let text;
 
 function setup() {
   charges = [];
   lines = [];
   t = 0;
+ 
+  createCanvas(windowWidth, windowHeight);
   button = createButton('Feldlinien');
   button.position(50, 50);
   button.mousePressed(feldlinien);
   vButton = createButton('E-Feld');
   vButton.position(150, 50);
   vButton.mousePressed(toggleVectors);
-  createCanvas(windowWidth, windowHeight);
+  slider=createSlider(0,2,0.2,0.02);
+  slider.position(250,50);
+  text=createP();
+  text.position(250,60);
+  text.style('font-size','100%');
   strokeWeight(1);
   scale = width / xext;
   charges.push(new Charge(0, 0, 1));
@@ -47,6 +55,10 @@ function draw() {
     setup();
   }
   background(200);
+  c=slider.value();
+  let proz=round(0.15/c*100);
+  text.html("Vmax= "+proz+"% von c")
+  
   translate(width / 2, height / 2);
   // let x = (mouseX - width / 2) / scale;
   // let y = (mouseY - height / 2) / scale;
