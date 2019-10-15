@@ -11,6 +11,7 @@ let showVectors = true;
 let fieldlines = true;
 let slider;
 let text;
+let v=0.15;
 
 function setup() {
   charges = [];
@@ -24,7 +25,7 @@ function setup() {
   vButton = createButton('E-Feld');
   vButton.position(150, 50);
   vButton.mousePressed(toggleVectors);
-  slider=createSlider(0,2,0.2,0.02);
+  slider=createSlider(0,0.25,0.15,0.01);
   slider.position(250,50);
   text=createP();
   text.position(250,60);
@@ -55,9 +56,9 @@ function draw() {
     setup();
   }
   background(200);
-  c=slider.value();
-  let proz=round(0.15/c*100);
-  text.html("Vmax= "+proz+"% von c")
+  v=slider.value();
+  let proz=round(v/c*100);
+  text.html("Vmax= "+proz+"% von c");
   
   translate(width / 2, height / 2);
   // let x = (mouseX - width / 2) / scale;
@@ -95,7 +96,7 @@ function draw() {
       C.r0.splice(0, 1);
     }
   }
-  t += 0.15;
+  t += v;
 }
 
 function vectors() {
