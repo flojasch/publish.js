@@ -39,6 +39,9 @@ function onoff() {
 }
 
 function draw() {
+  if (width != windowWidth || height != windowHeight) {
+    setup();
+  }
   background(0);
   w = slider.value();
   if (update) {
