@@ -27,7 +27,7 @@ function setup() {
   saveButton.mousePressed(saveOrdnung);
   tables = [];
   let x = 0;
-  let y = 0;
+  let y = 100;
   let k = 0;
   for (let i = 0; i < 4; i++) {
     x = 7 * tableWidth;
