@@ -30,17 +30,17 @@ function setup() {
   let y = 0;
   let k = 0;
   for (let i = 0; i < 4; i++) {
-    x = 0;
+    x = 7 * tableWidth;
     for (let j = 0; j < 7; j++) {
       if (k == names.length)
         break;
       tables.push(new Table(x, y, names[k], 0));
-      x += tableWidth;
+      x -= tableWidth;
       k++;
     }
     if (k == names.length)
       break;
-    y += 100;
+    y += 150;
   }
 }
 
@@ -86,24 +86,7 @@ function createTable(x, y, orientation) {
   tables.push(new Table(x, y, name, orientation));
 }
 
-function createList() {
-  list = [];
-  while (tables.length > 0) {
-    list.push(tables[0].name);
-    let y = tables[0].y;
-    let x = tables[0].x;
-    tables.splice(0, 1);
-    for (let j = 0; j < tables.length; j++) {
-      if (abs(y - tables[j].y) < tableHeight + 10 &&
-        abs(x - tables[j].x) < 10) {
-        list.push(tables[j].name);
-        tables.splice(j, 1);
-        break;
-      }
-    }
-  }
-  noList = false;
-}
+
 
 function erstelleSitzordnung() {
   // if (noList) {
@@ -115,56 +98,74 @@ function erstelleSitzordnung() {
     'Ida', 'Isabel', 'Max', 'Noah', 'Paolo', 'Jan Luca', 'Meik', 'Jonas',
     'Amy', 'Alina', 'Darwin', 'Lennard', 'Medin'
   ];
+  let x = 0;
+  let y = 0;
+  let k = 0;
+  let studentnumber = names.length;
+  for (let i = 0; i < 4; i++) {
+    x = 7 * tableWidth;
+    for (let j = 0; j < 7; j++) {
+      if (k == studentnumber)
+        break;
+      createTable(x, y, 0);
+      x -= tableWidth;
+      k++;
+    }
+    if (k == studentnumber)
+      break;
+    y += 150;
+  }
+
   // names = [];
   // for (let i = 0; i < list.length; i++) {
   //   names[i] = list[i];
   // }
   //Mittelreihen
-  let x = xAbstand + tableHeight;
-  let y = yAbstand + tableHeight + 2 * tableWidth;
-  for (let i = 0; i < 2; i++) {
-    createTable(x, y, 0);
-    x += tableWidth;
-  }
-  x = xAbstand + tableHeight;
-  y = yAbstand + tableHeight + 4.5 * tableWidth;
-  for (let i = 0; i < 2; i++) {
-    createTable(x, y);
-    x += tableWidth;
-  }
-  x = xAbstand + tableHeight + 5 * tableWidth;
-  y = yAbstand + tableHeight + 2 * tableWidth;
-  for (let i = 0; i < 2; i++) {
-    createTable(x, y);
-    x += tableWidth;
-  }
-  x = xAbstand + tableHeight + 5 * tableWidth;
-  y = yAbstand + tableHeight + 4.5 * tableWidth;
-  for (let i = 0; i < 2; i++) {
-    createTable(x, y);
-    x += tableWidth;
-  }
-  //Türreihe
-  x = xAbstand + tableHeight;
-  y = yAbstand + tableHeight + 4 * tableWidth;
-  for (let i = 0; i < 5; i++) {
-    createTable(x, y, 90);
-    y -= tableWidth;
-  }
-  //hintere Reihe
-  x = xAbstand;
-  y = yAbstand;
-  for (let i = 0; i < 8; i++) {
-    createTable(x, y, 0);
-    x += tableWidth;
-  }
-  //Fensterreihe
-  x = xAbstand + 8 * tableWidth;
-  y = yAbstand + tableHeight;
-  for (let i = 0; i < 5; i++) {
-    createTable(x, y, 90);
-    y += tableWidth;
-  }
+  // let x = xAbstand + tableHeight;
+  // let y = yAbstand + tableHeight + 2 * tableWidth;
+  // for (let i = 0; i < 2; i++) {
+  //   createTable(x, y, 0);
+  //   x += tableWidth;
+  // }
+  // x = xAbstand + tableHeight;
+  // y = yAbstand + tableHeight + 4.5 * tableWidth;
+  // for (let i = 0; i < 2; i++) {
+  //   createTable(x, y);
+  //   x += tableWidth;
+  // }
+  // x = xAbstand + tableHeight + 5 * tableWidth;
+  // y = yAbstand + tableHeight + 2 * tableWidth;
+  // for (let i = 0; i < 2; i++) {
+  //   createTable(x, y);
+  //   x += tableWidth;
+  // }
+  // x = xAbstand + tableHeight + 5 * tableWidth;
+  // y = yAbstand + tableHeight + 4.5 * tableWidth;
+  // for (let i = 0; i < 2; i++) {
+  //   createTable(x, y);
+  //   x += tableWidth;
+  // }
+  // //Türreihe
+  // x = xAbstand + tableHeight;
+  // y = yAbstand + tableHeight + 4 * tableWidth;
+  // for (let i = 0; i < 5; i++) {
+  //   createTable(x, y, 90);
+  //   y -= tableWidth;
+  // }
+  // //hintere Reihe
+  // x = xAbstand;
+  // y = yAbstand;
+  // for (let i = 0; i < 8; i++) {
+  //   createTable(x, y, 0);
+  //   x += tableWidth;
+  // }
+  // //Fensterreihe
+  // x = xAbstand + 8 * tableWidth;
+  // y = yAbstand + tableHeight;
+  // for (let i = 0; i < 5; i++) {
+  //   createTable(x, y, 90);
+  //   y += tableWidth;
+  // }
 
 }
 
@@ -193,4 +194,24 @@ class Table {
     text(this.name, 10, tableHeight / 2);
     pop();
   }
+}
+
+
+function createList() {
+  list = [];
+  while (tables.length > 0) {
+    list.push(tables[0].name);
+    let y = tables[0].y;
+    let x = tables[0].x;
+    tables.splice(0, 1);
+    for (let j = 0; j < tables.length; j++) {
+      if (abs(y - tables[j].y) < tableHeight + 10 &&
+        abs(x - tables[j].x) < 10) {
+        list.push(tables[j].name);
+        tables.splice(j, 1);
+        break;
+      }
+    }
+  }
+  noList = false;
 }
