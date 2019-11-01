@@ -14,7 +14,7 @@ class Point {
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  slider = createSlider(1, 20, 1, 1);
+  slider = createSlider(1,20, 1, 1);
   slider.position(50, 50);
   lambslider = createSlider(1, 300, 20, 1);
   lambslider.position(50, 100);
