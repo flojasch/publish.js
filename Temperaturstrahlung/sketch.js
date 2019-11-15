@@ -1,5 +1,5 @@
 let slider, norm;
-let tMax = 6000;
+let tMax = 10000;
 let wienConst = 2898000;
 let text;
 
@@ -26,7 +26,7 @@ function resultingColor(T) {
     gm += p * rgb[1];
     bm += p * rgb[2];
   }
-  let norm = cNorm(3500);
+  let norm = cNorm(6000);
   rm *= norm;
   gm *= norm;
   bm *= norm;
