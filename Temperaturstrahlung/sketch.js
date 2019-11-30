@@ -1,5 +1,5 @@
 let slider, norm;
-let tMax = 10000;
+let tMax = 7000;
 let wienConst = 2898000;
 let text;
 
@@ -11,8 +11,8 @@ function setup() {
   text.position(80, 70);
   text.style('font-size', '130%');
   text.style('color', '#ffffff');
-  let lMax = wienConst / 6000;
-  norm = 1 / planck(lMax, 6000);
+  let lMax = wienConst / tMax;
+  norm = 1 / planck(lMax, tMax);
 }
 
 function resultingColor(T) {
