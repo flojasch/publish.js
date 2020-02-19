@@ -6,7 +6,7 @@ let yAbstand = 10;
 let names = ['Tizian', 'Leonie', 'Anna B', 'Anton', 'Anna',
   'Smilla', 'Felix', 'Amelie', 'Artur', 'Matilda', 'Lucy', 'Mara', 'Lilian',
   'Ida', 'Isabel', 'Max', 'Noah', 'Paolo', 'Jan Luca', 'Meik', 'Jonas',
-  'Amy', 'Alina', 'Darwin', 'Lennard', 'Medin'
+  'Amy', 'Alina', 'Darwin', 'Lennard', 'Medin','Julius'
 ];
 let name = 'none';
 let picked = 0;
@@ -96,19 +96,20 @@ function erstelleSitzordnung() {
   names = ['Tizian', 'Leonie', 'Anna B', 'Anton', 'Anna',
     'Smilla', 'Felix', 'Amelie', 'Artur', 'Matilda', 'Lucy', 'Mara', 'Lilian',
     'Ida', 'Isabel', 'Max', 'Noah', 'Paolo', 'Jan Luca', 'Meik', 'Jonas',
-    'Amy', 'Alina', 'Darwin', 'Lennard', 'Medin'
+    'Amy', 'Alina', 'Darwin', 'Lennard', 'Medin','Julius'
   ];
   let x = 0;
-  let y = 0;
+  let y = 200;
   let k = 0;
   let studentnumber = names.length;
   for (let i = 0; i < 4; i++) {
-    x = 7 * tableWidth;
+    x = 9 * tableWidth;
     for (let j = 0; j < 7; j++) {
       if (k == studentnumber)
         break;
       createTable(x, y, 0);
       x -= tableWidth;
+      if(j==3) x-=tableWidth;
       k++;
     }
     if (k == studentnumber)
