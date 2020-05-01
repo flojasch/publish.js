@@ -4,20 +4,32 @@ let inputQ;
 let inputA;
 
 function setup() {
-	inputP = createInput('first prime');
-	inputP.position(20, 65);
+	createCanvas(800,400);
+	reset();
+	inputP = createInput(11);
+	inputP.position(150, 65);
 	button = createButton('submit');
-	button.position(inputP.x + inputP.width, 155);
-	button.mousePressed(send);
-	inputQ = createInput('second prime');
-	inputQ.position(20, 95);
-	inputA = createInput('public key a');
-	inputA.position(20, 125);
-	inputX = createInput('number to be encoded');
-	inputX.position(20, 155);
+	button.position(300, 175);
+	button.mousePressed(send);	
+	inputQ = createInput(13);
+	inputQ.position(150, 95);	
+	inputA = createInput(73);
+	inputA.position(150, 125);
+	inputX = createInput(100);
+	inputX.position(150, 175);
+}
+
+function reset(){
+	background(200);
+	textSize(20);
+	text('first prime:',20,80);
+	text('second prime:',20,110);
+	text('public key a:',20,140);
+	text('number to be encoded:',20,170);
 }
 
 function send() {
+	reset();
 	let p = inputP.value();
 	let q = inputQ.value();
 	let a = inputA.value();
@@ -26,16 +38,13 @@ function send() {
 	let m = (p - 1) * (q - 1);
 	let k = p * q;
 	let ex = modPow(x, a, k);
-	pex = createP('encoded number is ' + ex);
-	pex.position(300, 65);
+	text('encoded number is ' + ex,350, 80);
 	console.log(ex);
 	let b = inv(m, a);
-	pb = createP('decoding power is ' + b);
-	pb.position(300, 95);
+	text('decoding power is ' + b,350, 110);
 	console.log(b);
 	let dx = modPow(ex, b, k);
-	pdx = createP('decoded number is ' + dx);
-	pdx.position(300, 125);
+	text('decoded number is ' + dx,350, 140);
 	console.log(dx);
 }
 
