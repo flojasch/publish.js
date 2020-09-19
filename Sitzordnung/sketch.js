@@ -1,22 +1,21 @@
 let tables = [];
 let tableWidth = 100;
 let tableHeight = 50;
-let xAbstand = 50;
-let yAbstand = 10;
-let names = ['Tizian', 'Leonie', 'Anna B', 'Anton', 'Anna',
-  'Smilla', 'Felix', 'Amelie', 'Artur', 'Matilda', 'Lucy', 'Mara', 'Lilian',
-  'Ida', 'Isabel', 'Max', 'Noah', 'Paolo', 'Jan Luca', 'Meik', 'Jonas',
-  'Amy', 'Alina', 'Darwin', 'Lennard', 'Medin','Julius'
-];
+let xAbstand = 150;
+let yAbstand = 150;
+let names = ['Yassin','Mihajlo','Anastasia','Caio','Rahel'
+,'Tarja','Felix','Mila','Raquel','David','Noah','Marc','Vivien','Diana','Luca'
+,'Danil','Mariam','Mika','Michael','Luca','Tenaya','Marlon','Anahit','Samuel'
+,'Hannah','David','Moritz','Elias'];
 let name = 'none';
 let picked = 0;
 let isPicked = false;
 let noList = true;
-let list;
+let list=[];
 
 
 function setup() {
-  canvas = createCanvas(1500, 1000);
+  canvas = createCanvas(1000, 1000);
   canvas.position(50, 100);
   background(255);
   button = createButton('bestimme Sitzordnung');
@@ -25,6 +24,9 @@ function setup() {
   saveButton = createButton('save Image');
   saveButton.position(200, 20);
   saveButton.mousePressed(saveOrdnung);
+  for(let i=0;i<names.length;i++){
+    list[i]=names[i];
+  }
   tables = [];
   let x = 0;
   let y = 100;
@@ -32,25 +34,25 @@ function setup() {
   for (let i = 0; i < 4; i++) {
     x = 7 * tableWidth;
     for (let j = 0; j < 7; j++) {
-      if (k == names.length)
+      if (k == list.length)
         break;
-      tables.push(new Table(x, y, names[k], 0));
+      tables.push(new Table(x, y, list[k], 0));
       x -= tableWidth;
       k++;
     }
-    if (k == names.length)
+    if (k == list.length)
       break;
     y += 150;
   }
 }
 
 function saveOrdnung() {
-  saveCanvas(canvas, 'myCanvas', 'jpg');
+  saveCanvas(canvas, 'Sitzordnung7e', 'jpg');
 }
 
 function mousePressed() {
   if (mouseY > 0) {
-    for (let i = 0; i < names.length; i++) {
+    for (let i = 0; i < list.length; i++) {
       if (abs(tables[i].x + tableWidth / 2 - mouseX) < tableWidth / 2 &&
         abs(tables[i].y + tableHeight / 2 - mouseY) < tableHeight / 2) {
         picked = i;
@@ -72,101 +74,70 @@ function mouseReleased() {
 }
 
 function createTable(x, y, orientation) {
-  // if (name == 'none') {
-  //   let i = floor(random() * names.length / 2) * 2;
-  //   name = names.splice(i, 1);
-  //   tables.push(new Table(x, y, name, orientation));
-  //   name = names.splice(i, 1);
-  // } else {
-  //   tables.push(new Table(x, y, name, orientation));
-  //   name = 'none';
-  // }
-  let i = floor(random() * names.length);
-  name = names.splice(i, 1);
+  let i = floor(random() * list.length);
+  name = list.splice(i, 1);
   tables.push(new Table(x, y, name, orientation));
 }
 
 
 
 function erstelleSitzordnung() {
-  // if (noList) {
-  //   createList();
-  // }
   tables = [];
-  names = ['Tizian', 'Leonie', 'Anna B', 'Anton', 'Anna',
-    'Smilla', 'Felix', 'Amelie', 'Artur', 'Matilda', 'Lucy', 'Mara', 'Lilian',
-    'Ida', 'Isabel', 'Max', 'Noah', 'Paolo', 'Jan Luca', 'Meik', 'Jonas',
-    'Amy', 'Alina', 'Darwin', 'Lennard', 'Medin','Julius'
-  ];
-  let x = 0;
-  let y = 200;
-  let k = 0;
-  let studentnumber = names.length;
-  for (let i = 0; i < 4; i++) {
-    x = 9 * tableWidth;
-    for (let j = 0; j < 7; j++) {
-      if (k == studentnumber)
-        break;
-      createTable(x, y, 0);
-      x -= tableWidth;
-      if(j==3) x-=tableWidth;
-      k++;
-    }
-    if (k == studentnumber)
-      break;
-    y += 150;
+  for(let i=0;i<names.length;i++){
+    list[i]=names[i];
   }
-
-  // names = [];
-  // for (let i = 0; i < list.length; i++) {
-  //   names[i] = list[i];
-  // }
-  //Mittelreihen
-  // let x = xAbstand + tableHeight;
-  // let y = yAbstand + tableHeight + 2 * tableWidth;
-  // for (let i = 0; i < 2; i++) {
-  //   createTable(x, y, 0);
-  //   x += tableWidth;
-  // }
-  // x = xAbstand + tableHeight;
-  // y = yAbstand + tableHeight + 4.5 * tableWidth;
-  // for (let i = 0; i < 2; i++) {
-  //   createTable(x, y);
-  //   x += tableWidth;
-  // }
-  // x = xAbstand + tableHeight + 5 * tableWidth;
-  // y = yAbstand + tableHeight + 2 * tableWidth;
-  // for (let i = 0; i < 2; i++) {
-  //   createTable(x, y);
-  //   x += tableWidth;
-  // }
-  // x = xAbstand + tableHeight + 5 * tableWidth;
-  // y = yAbstand + tableHeight + 4.5 * tableWidth;
-  // for (let i = 0; i < 2; i++) {
-  //   createTable(x, y);
-  //   x += tableWidth;
-  // }
-  // //Türreihe
-  // x = xAbstand + tableHeight;
-  // y = yAbstand + tableHeight + 4 * tableWidth;
-  // for (let i = 0; i < 5; i++) {
-  //   createTable(x, y, 90);
-  //   y -= tableWidth;
-  // }
-  // //hintere Reihe
-  // x = xAbstand;
-  // y = yAbstand;
-  // for (let i = 0; i < 8; i++) {
-  //   createTable(x, y, 0);
-  //   x += tableWidth;
-  // }
-  // //Fensterreihe
-  // x = xAbstand + 8 * tableWidth;
-  // y = yAbstand + tableHeight;
-  // for (let i = 0; i < 5; i++) {
-  //   createTable(x, y, 90);
-  //   y += tableWidth;
-  // }
+  // Mittelreihen
+  let x = xAbstand + tableHeight;
+  let y = yAbstand + tableHeight + 2 * tableWidth;
+  for (let i = 0; i < 2; i++) {
+    createTable(x, y, 0);
+    x += tableWidth;
+  }
+  x = xAbstand + tableHeight;
+  y = yAbstand + 6 * tableWidth;
+  for (let i = 0; i < 2; i++) {
+    createTable(x, y);
+    x += tableWidth;
+  }
+  x = xAbstand + tableHeight;
+  y = yAbstand + 4.25 * tableWidth;
+  for (let i = 0; i < 2; i++) {
+    createTable(x, y);
+    x += tableWidth;
+  }
+  x = xAbstand + tableHeight + 4 * tableWidth;
+  y = yAbstand + 3.25 * tableWidth;
+  for (let i = 0; i < 2; i++) {
+    createTable(x, y);
+    x += tableWidth;
+  }
+  x = xAbstand + tableHeight + 4 * tableWidth;
+  y = yAbstand + 6 * tableWidth;
+  for (let i = 0; i < 2; i++) {
+    createTable(x, y);
+    x += tableWidth;
+  }
+  //Türreihe
+  x = xAbstand + tableHeight;
+  y = yAbstand + tableHeight;
+  for (let i = 0; i < 6; i++) {
+    createTable(x, y, 90);
+    y += tableWidth;
+  }
+  //hintere Reihe
+  x = xAbstand+ tableWidth/2;
+  y = yAbstand+ tableHeight;
+  for (let i = 0; i < 6; i++) {
+    createTable(x, y, 0);
+    x += tableWidth;
+  }
+  //Fensterreihe
+  x = xAbstand + 7 * tableWidth;
+  y = yAbstand + tableHeight;
+  for (let i = 0; i < 6; i++) {
+    createTable(x, y, 90);
+    y += tableWidth;
+  }
 
 }
 
