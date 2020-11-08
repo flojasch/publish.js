@@ -39,6 +39,7 @@ function setPixel(T) {
 }
 
 function I(x){
+  if(x==0) return 1;
   let b=PI*d*100/lambda*x;
   let a=sin(b)/b;
   return a*a;
