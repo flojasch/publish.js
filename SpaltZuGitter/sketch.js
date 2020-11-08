@@ -12,6 +12,7 @@ let yoff;
 let arrownum = 3;
 let R;
 let range;
+let drawRange = 0;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -39,8 +40,8 @@ function setup() {
   text2.style('color', '#ffffff');
   rangeSlider = createSlider(1, 10, 5, 1);
   rangeSlider.position(850, 50);
-  rtext=createP();
-  rtext.position(850,60);
+  rtext = createP();
+  rtext.position(850, 60);
   rtext.style('font-size', '130%');
   rtext.style('color', '#ffffff');
   yoff = height - 100;
@@ -52,7 +53,7 @@ function reset() {
   arrownum = slider.value();
   elemnum = elemSlider.value();
   n = breiteSlider.value();
-  range=rangeSlider.value();
+  range = rangeSlider.value();
   R = 400 / (arrownum * elemnum);
   calcYs();
   Yeinfach();
@@ -64,11 +65,11 @@ function Yeinfach() {
     let y = 0;
     let alpha = 0;
     for (let j = 0; j < elemnum; j++) {
-      alpha -= i / width * PI*range / ((n - 1) * elemnum);
+      alpha -= i / width * PI * range / ((n - 1) * elemnum);
       x += R * cos(alpha);
       y += R * sin(alpha);
     }
-    yeinfach[i] = arrownum*sqrt(x * x + y * y);
+    yeinfach[i] = arrownum * sqrt(x * x + y * y);
   }
 }
 
@@ -79,9 +80,9 @@ function calcYs() {
     let alpha = 0;
 
     for (let k = 0; k < arrownum; k++) {
-      alpha -= i / width * PI*range;
+      alpha -= i / width * PI * range;
       for (let j = 0; j < elemnum; j++) {
-        alpha -= i / width * PI*range / ((n - 1) * elemnum);
+        alpha -= i / width * PI * range / ((n - 1) * elemnum);
         x += R * cos(alpha);
         y += R * sin(alpha);
       }
@@ -97,41 +98,41 @@ function draw() {
   if (arrownum != slider.value()) reset();
   if (n != breiteSlider.value()) reset();
   if (elemnum = elemSlider.value()) reset();
-  if(range!=rangeSlider.value()) reset();
+  if (range != rangeSlider.value()) reset();
   text.html('Anzahl Spalte: ' + arrownum);
   btext.html('Spaltbreite: 1/' + n);
   etext.html('Anzahl Elementarwellen pro Spalt: ' + elemnum);
-  rtext.html('Bereich von 0 bis '+range+' lambda');
+  rtext.html('Bereich von 0 bis ' + range + ' lambda');
   Arrows = [];
   background(0);
-  
-  for (let i = 0; i < mouseX; i++) {
+  if (mouseY > 200) drawRange = mouseX;
+  for (let i = 0; i < drawRange; i++) {
     stroke(255, 0, 0);
     line(i, yoff, i, yoff - yvalues[i]);
     stroke(200, 200, 50);
-    point(i,yoff-yeinfach[i]);
+    point(i, yoff - yeinfach[i]);
   }
   stroke(0, 0, 250);
-  let x = mouseX;
+  let x = drawRange;
   let y = yoff;
   let alpha = 0;
   for (let k = 0; k < arrownum; k++) {
-    alpha -= mouseX / width * PI*range;
+    alpha -= drawRange / width * PI * range;
     for (let j = 0; j < elemnum; j++) {
-      alpha -= mouseX / width * PI*range / ((n - 1) * elemnum);
+      alpha -= drawRange / width * PI * range / ((n - 1) * elemnum);
       Arrows[elemnum * k + j] = new Arrow(x, y, alpha);
       x += R * cos(alpha);
       y += R * sin(alpha);
     }
   }
-  let dx = x - mouseX;
+  let dx = x - drawRange;
   let dy = y - yoff;
   let r = sqrt(dx * dx + dy * dy);
   let beta = acos(dx / r);
   if (dy < 0) beta = TWO_PI - beta;
-  translate(mouseX, yoff);
+  translate(drawRange, yoff);
   rotate(-beta - PI / 2);
-  translate(-mouseX, -yoff);
+  translate(-drawRange, -yoff);
   for (let k = 0; k < Arrows.length; k++) {
     Arrows[k].show();
   }
