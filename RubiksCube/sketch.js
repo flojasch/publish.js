@@ -4,7 +4,7 @@ let inkr = 2;
 let dist = len / inkr;
 let started = false;
 let angle = 0;
-let speed = 2;
+let speed = 0.05;
 let animating = false;
 let finished = true;
 let move = new Move([0, 0, 0], 1);
@@ -33,14 +33,14 @@ let allMoves = [
 ];
 
 function preload() {
-  nnJSON = loadJSON("nn2x2.json");
+   nnJSON = loadJSON("nn2x2.json");
   // nnJSON = loadJSON("nn.json");
 }
 
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
   cube = new Cube(1);
-  for (let i = 0; i < 15; i++) {
+  for (let i = 0; i < 6; i++) {
     let r = int(random(allMoves.length));
     moves.push(allMoves[r]);
   }
@@ -143,8 +143,8 @@ let pos;
 
 function solve() {
   pos = new McTree(cube);
-  grow(pos, 12);
-  for (let i = 0; i < 400; i++) {
+  grow(pos, 9);
+  for (let i = 0; i < 10; i++) {
     pos = pos.getBest();
     console.log("predicted value " + pos.getValue());
     console.log("cubevalue: " + value(pos.cube));
