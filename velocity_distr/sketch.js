@@ -9,6 +9,7 @@ function setup() {
   // let canvas = createCanvas(800, 600);
   // canvas.position(20, 20);
   gSlider = new Slider(20, 20, 0, 0.5, 0.1, 0.05);
+  rSlider = new Slider(220,20,5,100,10,1);
   let y = height/2;
   let x = 0;
   for (let i = 0; i < anzahl; i++) {
@@ -31,7 +32,11 @@ function setup() {
 function draw() {
   background(100);
   gravity.y = gSlider.slider.value();
-  gSlider.text.html("gravity")
+  let r=rSlider.slider.value();
+  balls[anzahl-1].rad=r;
+  balls[anzahl-1].mass=r*r;
+  gSlider.text.html("gravity");
+  rSlider.text.html("Radius of blue Ball");
   for (let i = 0; i < balls.length; ++i) {
     for (let j = i + 1; j < balls.length; j++) {
       Ball.collision(balls[i], balls[j]);
