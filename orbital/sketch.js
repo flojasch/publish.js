@@ -6,6 +6,7 @@ let ypos = 0;
 let xpos = 0;
 let zpos = -3000;
 let t = -5;
+let dir=1;
 let omega;
 
 function setup() {
@@ -44,7 +45,8 @@ function oberflaeche() {
 
 function draw() {
     background(100);
-    t += 0.02;
+    if(t>5||t<-5) dir *=-1;
+    t += dir*0.01;
     for (var i = 0; i <= g.detailY; i++) {
         var v = i / g.detailY;
         var phi = Math.PI * v - Math.PI / 2;
