@@ -1,18 +1,16 @@
 let gen;
 let slider;
-let pslider;
 let angle;
 
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
   slider = createSlider(0, PI / 2, PI/3, 0.01);
   slider.position(50,50);
-  pslider=createSlider(-PI/2,PI/2,0,0.01);
-  pslider.position(50,70);
   gen = 0;
 }
 
 function mousePressed() {
+  if(mouseY > 100)
   gen++;
 }
 
@@ -22,10 +20,8 @@ function draw() {
   ambientLight(100, 100, 100);
   noStroke();
   angle = slider.value();
-  pangle=pslider.value();
   translate(0,height/2,0);
   rotateY(frameCount*0.01);
-  rotateX(pangle);
   baum(height / 3,20,1,0);
 }
 
