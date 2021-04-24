@@ -59,6 +59,7 @@ function mouseWheel(event)
 
   mx = ix - (ix-mx)*zoom;
   my = iy - (iy-my)*zoom;
+  return false;
 }
 
 function draw(){
