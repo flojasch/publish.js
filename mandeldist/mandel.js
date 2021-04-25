@@ -44,6 +44,7 @@ function setup() {
   selfrac.option('escape time');
   selfrac.option('angle');
   selfrac.changed(mySelectEvent);
+  maxres=1;
   for (let i = 0; i < width; i++) {
     darr[i] = [];
     tarr[i] = [];
@@ -59,6 +60,9 @@ function setmaxres() {
   maxres = 1;
 }
 
+function setmaxres(){
+  maxres=1;
+}
 function mySelectEvent() {
   action = true;
   if (selfrac.value() == 'distance') RADIUS = 1000;
