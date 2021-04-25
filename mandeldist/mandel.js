@@ -15,23 +15,28 @@ let maxiter;
 
 
 function setup() {
-  canvas = createCanvas(500, 500);
+  canvas = createCanvas(600, 600);
   canvas.position(50, 50);
   pixelDensity(1);
   colorgradSlider = createSlider(5, 100, 50, 1);
-  colorgradSlider.position(50, 550);
+  colorgradSlider.position(50, 10);
   var colortxt = createDiv('Color');
-  colortxt.position(50, 570);
-  maxiterSlider = createSlider(0, 1000, 50,10);
-  maxiterSlider.position(350, 550);
+  colortxt.position(50, 30);
+  maxiterSlider = createSlider(0, 1000, 50, 10);
+  maxiterSlider.position(350, 10);
   var itertxt = createDiv('Iterations');
-  itertxt.position(350, 570);
+  itertxt.position(350, 30);
   selfrac = createSelect();
   selfrac.position(500, 30);
   selfrac.option('distance');
   selfrac.option('classic')
   selfrac.changed(mySelectEvent);
-
+  for (let i = 0; i < width; i++) {
+    darr[i] = [];
+    for (let j = 0; j < height; j++) {
+      darr[i][j] = 0;
+    }
+  }
 }
 
 function mySelectEvent() {
@@ -86,8 +91,8 @@ function draw() {
 function setd(i, j) {
   darr[i][j] = 0;
   var c2 = cx * cx + cy * cy;
-  if (256.0 * c2 * c2 - 96.0 * c2 + 32.0 * cx - 3.0 < 0.0) return;
-  if (16.0 * (c2 + 2.0 * cx + 1.0) - 1.0 < 0.0) return;
+  if (256.0 * c2 * c2 - 96.0 * c2 + 32.0 * cx - 3.0 < 0.0) return 0;
+  if (16.0 * (c2 + 2.0 * cx + 1.0) - 1.0 < 0.0) return 0;
 
   if (selfrac.value() == 'distance') {
     let xn = xsq = dx = 0;
@@ -103,8 +108,7 @@ function setd(i, j) {
       ysq = yn * yn;
       R = xsq + ysq;
       if (R > RADIUS) {
-        darr[i][j] = Math.sqrt(R / (dx * dx + dy * dy)) * Math.log(R);
-        return;
+        return darr[i][j] = Math.sqrt(R / (dx * dx + dy * dy)) * Math.log(R);
       }
     }
   }
@@ -120,8 +124,7 @@ function setd(i, j) {
       xx = x * x;
       R = xx + yy;
       if (R > RADIUS) {
-        darr[i][j] = Math.sqrt(n + 1 - log(log(R) / log(RADIUS)) / log(2));
-        return;
+        return darr[i][j] = Math.sqrt(n + 1 - log(log(R) / log(RADIUS)) / log(2));
       }
     }
   }
@@ -131,7 +134,9 @@ function setrgb(i, j) {
   colorgrad = colorgradSlider.value();
 
   if (selfrac.value() == 'distance') {
-    let d = Math.pow(10 * darr[i][j] / ex, 5/colorgrad);
+    // let d=255;
+    // if(darr[i][j]/ex < 0.05/colorgrad) d=0;
+    let d = Math.pow(5 * darr[i][j] / ex, 5 / colorgrad);
     d = Math.min(1, d) * 255;
     for (let l = 0; l < 3; l++) {
       rgb[l] = d;
@@ -164,30 +169,31 @@ function mandel() {
   ymax = ymin + ey;
 
   if (action) {
+    res = 16;
     action = false;
-    for (var i = 0; i < width; i++) {
+  }
+
+  if (res >= 1) {
+    for (let i = 0; i < width; i += res) {
       darr[i] = [];
-      for (var j = 0; j < height; j++) {
+      if(action) break;
+      for (let j = 0; j < height; j += res) {
         cx = map(i, 0, width, xmin, xmax);
         cy = map(j, 0, height, ymax, ymin);
         setd(i, j);
         setrgb(i, j);
-        var pix = (i + j * width) * 4;
-        pixels[pix + 3] = 255;
-        for (var l = 0; l < 3; l++)
-          pixels[pix + l] = rgb[l];
+        for (let di = 0; di < res; di++) {
+          for (let dj = 0; dj < res; dj++) {
+            var pix = (i + di + (j + dj) * width) * 4;
+            pixels[pix + 3] = 255;
+            for (var l = 0; l < 3; l++)
+              pixels[pix + l] = rgb[l];
+          }
+        }
       }
     }
-  } else {
-    for (let i = 0; i < width; i++) {
-      for (let j = 0; j < height; j++) {
-        setrgb(i, j);
-        var pix = (i + j * width) * 4;
-        pixels[pix + 3] = 255;
-        for (var l = 0; l < 3; l++)
-          pixels[pix + l] = rgb[l];
-      }
-    }
+    res /= 2;
   }
+  
   updatePixels();
 }
