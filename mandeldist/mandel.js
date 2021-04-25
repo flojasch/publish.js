@@ -12,12 +12,17 @@ var darr = [];
 var action = true;
 var rgb = [];
 let maxiter;
+let colorgrad;
+let maxres;
 
 
 function setup() {
   canvas = createCanvas(600, 600);
   canvas.position(50, 50);
   pixelDensity(1);
+  button = createButton('max Resolution');
+  button.position(600, 30);
+  button.mousePressed(setmaxres);
   colorgradSlider = createSlider(5, 100, 50, 1);
   colorgradSlider.position(50, 10);
   var colortxt = createDiv('Color');
@@ -31,6 +36,7 @@ function setup() {
   selfrac.option('distance');
   selfrac.option('classic')
   selfrac.changed(mySelectEvent);
+  maxres=1;
   for (let i = 0; i < width; i++) {
     darr[i] = [];
     for (let j = 0; j < height; j++) {
@@ -39,6 +45,9 @@ function setup() {
   }
 }
 
+function setmaxres(){
+  maxres=1;
+}
 function mySelectEvent() {
   action = true;
 }
@@ -170,12 +179,12 @@ function mandel() {
 
   if (action) {
     res = 16;
+    maxres=4;
     action = false;
   }
 
-  if (res >= 1) {
+  if (res >= maxres) {
     for (let i = 0; i < width; i += res) {
-      darr[i] = [];
       if(action) break;
       for (let j = 0; j < height; j += res) {
         cx = map(i, 0, width, xmin, xmax);
@@ -192,7 +201,19 @@ function mandel() {
         }
       }
     }
-    res /= 2;
+    res /= 4;
+  }
+
+  if(colorgradSlider.value()!=colorgrad){
+    for(let i=0;i<width;++i){
+      for(let j=0;j<height;++j){
+        setrgb(i,j);
+        var pix = (i + j * width) * 4;
+            pixels[pix + 3] = 255;
+            for (var l = 0; l < 3; l++)
+              pixels[pix + l] = rgb[l];
+      }
+    }
   }
   
   updatePixels();
