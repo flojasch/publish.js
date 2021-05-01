@@ -13,8 +13,8 @@ let tarr = [];
 var action = true;
 var rgb = [];
 let maxiter;
-var a = 1 / 50.0;
-var b = 1 / Math.log(2);
+let a = 1 / 50.0;
+let b = 1 / Math.log(2);
 let nu, R,
   phi = 0,
   phialt = 0,
@@ -30,21 +30,23 @@ function setup() {
   button = createButton('max Resolution');
   button.position(600, 30);
   button.mousePressed(setmaxres);
-  colorgradSlider = createSlider(5, 100, 50, 1);
+  colorgradSlider = createSlider(5, 100, 30, 1);
   colorgradSlider.position(50, 10);
-  var colortxt = createDiv('Color');
+  colortxt = createDiv('Color');
   colortxt.position(50, 30);
   maxiterSlider = createSlider(0, 1000, 50, 10);
   maxiterSlider.position(350, 10);
-  var itertxt = createDiv('Iterations');
+  itertxt = createDiv('Iterations');
   itertxt.position(350, 30);
+  ctxt = createDiv('');
+  ctxt.position(50, 650);
   selfrac = createSelect();
   selfrac.position(500, 30);
   selfrac.option('distance');
   selfrac.option('escape time');
   selfrac.option('angle');
   selfrac.changed(mySelectEvent);
-  maxres=1;
+  maxres = 1;
   for (let i = 0; i < width; i++) {
     darr[i] = [];
     tarr[i] = [];
@@ -60,14 +62,18 @@ function setmaxres() {
   maxres = 1;
 }
 
-function setmaxres(){
-  maxres=1;
-}
+
 function mySelectEvent() {
   action = true;
   if (selfrac.value() == 'distance') RADIUS = 1000;
-  if (selfrac.value() == 'escape time') RADIUS = 16;
-  if (selfrac.value() == 'angle') RADIUS = exp(50);
+  if (selfrac.value() == 'escape time') {
+    RADIUS = 16;
+    a = 1 / log(RADIUS);
+  }
+  if (selfrac.value() == 'angle') {
+    RADIUS = exp(50);
+    a = 1 / 50;
+  }
 }
 
 function mousePressed() {
@@ -76,7 +82,7 @@ function mousePressed() {
     dragy = map(mouseY, 0, height, ymax, ymin);
     overscreen = true;
   }
-  
+
 }
 
 function mouseDragged() {
@@ -85,7 +91,7 @@ function mouseDragged() {
     my -= map(mouseY, 0, height, ymax, ymin) - dragy;
     action = true;
   }
-  
+
 }
 
 function mouseReleased() {
@@ -156,7 +162,7 @@ function setd(i, j) {
       xx = x * x;
       R = xx + yy;
       if (R > RADIUS) {
-        darr[i][j] = Math.sqrt(n + 1 - log(log(R) / log(RADIUS)) / log(2));
+        darr[i][j] = Math.sqrt(n + 1 - b*log(log(R)));
         break;
       }
     }
@@ -180,7 +186,7 @@ function setd(i, j) {
       R = xx + yy;
       phi += 1 - abs(x) * x / R;
       if (R > RADIUS) {
-        nu = b * log(a * log(R));
+        nu = b * log(a*log(R));
         darr[i][j] = sqrt(n + 1 - nu);
         t = (((1 - nu) * phi + nu * phialt) * c) % 2 * 2;
         if (t > 2) {
@@ -195,7 +201,7 @@ function setd(i, j) {
 }
 
 function setrgb(i, j) {
-  
+
 
   if (selfrac.value() == 'distance') {
     // let d=255;
@@ -249,6 +255,7 @@ function mandel() {
   xmax = xmin + ex;
   ymin = my - ey / 2;
   ymax = ymin + ey;
+  ctxt.html('ex='+ex+'  c= '+mx+' + '+my+'*I');
 
   if (action) {
     res = 16;
@@ -278,7 +285,7 @@ function mandel() {
   }
 
   if (colorgradSlider.value() != colorgrad) {
-    colorgrad=colorgradSlider.value();
+    colorgrad = colorgradSlider.value();
     for (let i = 0; i < width; ++i) {
       for (let j = 0; j < height; ++j) {
         setrgb(i, j);
