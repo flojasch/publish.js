@@ -1,16 +1,13 @@
-var mx = -0.7,
-  my = 0.0;
-var ex = 2.8,
-  ey = 2.8;
-var xmin, xmax, ymin, ymax;
-var colorgradSlider, maxiterSlider;
-var dragx, dragy;
+let mx, my, ex, ey;
+let xmin, xmax, ymin, ymax;
+let colorgradSlider, maxiterSlider;
+let dragx, dragy;
 var overscreen = false;
 let cx, cy;
 let RADIUS = 1000;
 var darr = [];
 let tarr = [];
-var action = true;
+var action;
 var rgb = [];
 let maxiter;
 let a = 1 / 50.0;
@@ -26,7 +23,6 @@ let mxneu = mx;
 let myneu = my;
 let ismini = false;
 
-
 function setup() {
   canvas = createCanvas(600, 600);
   canvas.position(50, 50);
@@ -37,6 +33,9 @@ function setup() {
   mbutton = createButton('minimandel');
   mbutton.position(500, 10);
   mbutton.mousePressed(minimandel);
+  rbutton = createButton('reset');
+  rbutton.position(450, 10);
+  rbutton.mousePressed(reset);
   colorgradSlider = createSlider(5, 100, 30, 1);
   colorgradSlider.position(50, 10);
   colortxt = createDiv('Color');
@@ -53,7 +52,7 @@ function setup() {
   selfrac.option('escape time');
   selfrac.option('angle');
   selfrac.changed(mySelectEvent);
-  maxres = 1;
+  reset();
   for (let i = 0; i < width; i++) {
     darr[i] = [];
     tarr[i] = [];
@@ -67,6 +66,16 @@ function setup() {
 
 function setmaxres() {
   maxres = 1;
+}
+
+function reset() {
+  maxres = 1;
+  maxiter = 100;
+  mx = -0.7;
+  my = 0.0;
+  ex = 2.8;
+  ey = 2.8;
+  action=false;
 }
 
 function mySelectEvent() {

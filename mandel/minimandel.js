@@ -22,8 +22,7 @@ function minimandel() {
   // for (let k = 1; k < period; k++) {
   //   zn[1].mult(z);
   //   zn[1].mult(2);
-  //   z.mult(z);
-  //   z.add(c);
+  //   z.sqr(c);
   // }
   mxneu=c.x;
   myneu=c.y;

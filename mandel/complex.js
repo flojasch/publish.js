@@ -4,7 +4,13 @@ class Complex {
     this.x = x;
     this.y = y;
   }
-
+  sqr(c) {
+    let xx = this.x * this.x;
+    let yy = this.y * this.y;
+    this.y = this.x * this.y * 2 + c.y;
+    this.x = xx - yy + c.x;
+    return xx + yy;
+  }
   set(z) {
     this.x = z.x;
     this.y = z.y;
@@ -61,7 +67,7 @@ class Complex {
   static abs(z) {
     return sqrt(z.x ** 2 + z.y ** 2);
   }
-  
+
   static absq(z) {
     return z.x ** 2 + z.y ** 2;
   }
