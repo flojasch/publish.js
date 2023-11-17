@@ -57,18 +57,20 @@ function colorValues(x) {
 
 function setPixel() {
   loadPixels();
-
-  for (let i = 0; i < width; i++) {
+  let d=pixelDensity();
+  let w=d*width;
+  let h=d*height;
+  for (let i = 0; i < w; i++) {
     let p=1;
-    let x = (i - width / 2);
+    let x = (i - w / 2);
     if (weis) {
       rgb = colorValues(x);
     } else {
       p = I(x, lambda);
       rgb = nmToRgb(lambda);
     }
-    for (let j = 0; j < height; j++) {
-      let k = j * width + i;
+    for (let j = 0; j < h; j++) {
+      let k = j * w + i;
       pixels[k * 4] = rgb[0] * p;
       pixels[k * 4 + 1] = rgb[1] * p;
       pixels[k * 4 + 2] = rgb[2] * p;

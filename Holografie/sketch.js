@@ -4,43 +4,40 @@ let lambda = 200;
 let brightness = [];
 let d;
 let points = [];
+let pd;
+let settingPixel = false;
 
-class Point {
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
-  }
-}
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  slider = createSlider(1,20, 1, 1);
+  slider = createSlider(1, 20, 1, 1);
   slider.position(50, 50);
   lambslider = createSlider(1, 300, 20, 1);
   lambslider.position(50, 100);
   button = createButton("calcLight");
   button.position(30, 150);
   button.mousePressed(setBrightness);
+  pd = pixelDensity();
 }
 
 function mousePressed() {
   if (mouseX > 200) {
-    points.push(new Point(mouseX, mouseY));
+    points.push({ x: mouseX, y: mouseY });
   }
 }
 
 function isOpen(sX) {
   let ret = false;
-  let x=points.length;
-  let y=0;
+  let x = points.length;
+  let y = 0;
   for (let point of points) {
     let x0 = sX - point.x;
     let y0 = point.y;
-    let alpha=TWO_PI / lambda * sqrt(y0 * y0 + x0 * x0);
-    x+=cos(alpha);
-    y+=sin(alpha);
+    let alpha = TWO_PI / lambda * sqrt(y0 * y0 + x0 * x0);
+    x += cos(alpha);
+    y += sin(alpha);
   }
-  if (x*x+y*y > points.length*points.length*1.8) {
+  if (x * x + y * y > points.length * points.length * 1.8) {
     ret = true;
   }
   return ret;
@@ -48,13 +45,14 @@ function isOpen(sX) {
 
 function setBrightness() {
   let dy, dx;
-  let d=10;
-  let max=0;
-  for (let i = 0; i < width; i += d) {
-    for (let j = 0; j < height; j += d) {
+  let max = 0;
+  let w = width;
+  let h = height;
+  for (let i = 0; i < w; i++) {
+    for (let j = 0; j < h; j++) {
       let x = i;
       let y = j;
-      for (let sX = 0; sX < width; sX += d) {
+      for (let sX = 0; sX < w; sX++) {
         if (isOpen(sX)) {
           let dx = i - sX;
           let alpha = sqrt(j * j + dx * dx) / lambda * TWO_PI;
@@ -64,27 +62,22 @@ function setBrightness() {
       }
       dx = i - x;
       dy = j - y;
-      let intensity=dx * dx + dy * dy;
-      if(intensity>max){
-        max=intensity;
-      }
-      for (let u = i; u < i + d; u++) {
-        for (let v = j; v < j + d; v++) {
-          brightness[u + width * v] = intensity;
-        }
-      }
+      let intensity = dx * dx + dy * dy;
+      if (intensity > max) max = intensity;
+      for (let di = 0; di < pd; di++)
+        for (let dj = 0; dj < pd; dj++)
+          brightness[i * pd + di + (dj + j * pd) * w * pd] = intensity;
     }
   }
-  for (let u = 0; u < width; u++) {
-    for (let v = 0; v < height; v++) {
-      brightness[u + width * v] *= 255/max;
-    }
+  for (let i = 0; i < w * h * pd * pd; i++) {
+    brightness[i] *= 255 / max;
   }
+  settingPixel = true;
 }
 
 function setPixel() {
   loadPixels();
-  for (let k = 0; k < width * height; k++) {
+  for (let k = 0; k < width * pd * height * pd; k++) {
     pixels[k * 4] = brightness[k];
     pixels[k * 4 + 1] = 0;
     pixels[k * 4 + 2] = 0;
@@ -101,8 +94,8 @@ function draw() {
   lambda = lambslider.value();
 
   Arrows = [];
-  //background(0);
-  setPixel();
+  background(0);
+  if (settingPixel) setPixel();
   stroke(0, 0, 250);
   line(50, 120, 50 + lambda, 120);
   let x = mouseX;

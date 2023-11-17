@@ -4,6 +4,8 @@ let slider;
 let widthSlider;
 let lambda = 200;
 let brightness = [];
+let pd;
+let settingPixel=false;
 
 
 function setup() {
@@ -17,6 +19,7 @@ function setup() {
   button=createButton("calcLight");
   button.position(50,200);
   button.mousePressed(setBrightness);
+  pd=pixelDensity();
 }
 
 function setBrightness() {
@@ -26,27 +29,39 @@ function setBrightness() {
 
   let d = breite / arrownum;
   R = 1000 / arrownum;
-  for (let i = 0; i < width; i++) {
-    for (let j = 0; j < height; j++) {
+  let w=width;
+  let h=height;
+  let maxValue=0;
+
+  for (let i = 0; i < w; i++) {
+    for (let j = 0; j < h; j++) {
       let x=i;
       let y=j;
       for (let k = 0; k < arrownum; k++) {
-        let dx = i - (d * k + (width - breite) / 2);
+        let dx = i - (d * k + (w - breite) / 2);
         let alpha = sqrt(j * j + dx * dx) / lambda * TWO_PI;
         x += R * cos(alpha);
         y += R * sin(alpha);
       }
       let dx = i - x;
       let dy = j - y;
-      brightness[i + width * j] = 255 / 1000 * sqrt(dx * dx + dy * dy);
+      let value= dx * dx + dy * dy;
+      if(value>maxValue) maxValue=value;
+      for (let di = 0; di < pd; di++) 
+        for (let dj = 0; dj < pd; dj++)  
+          brightness[i*pd+di + (dj+j*pd)*w*pd] = value;
     }
   }
-}
 
+  for (let i = 0; i < w*h*pd*pd; i++) {
+      brightness[i] *= 255/maxValue;
+  }
+  settingPixel=true;
+}
 
 function setPixel() {
   loadPixels();
-  for (let k = 0; k < width * height; k++) {
+  for (let k = 0; k < width *pd* height*pd; k++) {
     pixels[k * 4] = brightness[k];
     pixels[k * 4 + 1] = 0;
     pixels[k * 4 + 2] = 0;
@@ -54,7 +69,6 @@ function setPixel() {
   }
   updatePixels();
 }
-
 
 function draw() {
   if (width != windowWidth || height != windowHeight) {
@@ -65,8 +79,8 @@ function draw() {
   breite = widthSlider.value();
 
   Arrows = [];
-  //background(0);
-  setPixel();
+  background(0);
+  if(settingPixel) setPixel();
   stroke(0, 0, 250);
   line(50, 120, 50 + lambda, 120);
   let d = breite / arrownum;
