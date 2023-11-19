@@ -4,7 +4,6 @@ let lambda = 200;
 let brightness = [];
 let d;
 let points = [];
-let pd;
 let settingPixel = false;
 
 
@@ -17,7 +16,7 @@ function setup() {
   button = createButton("calcLight");
   button.position(30, 150);
   button.mousePressed(setBrightness);
-  pd = pixelDensity();
+  pixelDensity(1);
 }
 
 function mousePressed() {
@@ -64,12 +63,10 @@ function setBrightness() {
       dy = j - y;
       let intensity = dx * dx + dy * dy;
       if (intensity > max) max = intensity;
-      for (let di = 0; di < pd; di++)
-        for (let dj = 0; dj < pd; dj++)
-          brightness[i * pd + di + (dj + j * pd) * w * pd] = intensity;
+          brightness[i + j  * w ] = intensity;
     }
   }
-  for (let i = 0; i < w * h * pd * pd; i++) {
+  for (let i = 0; i < w * h; i++) {
     brightness[i] *= 255 / max;
   }
   settingPixel = true;
@@ -77,7 +74,7 @@ function setBrightness() {
 
 function setPixel() {
   loadPixels();
-  for (let k = 0; k < width * pd * height * pd; k++) {
+  for (let k = 0; k < width * height; k++) {
     pixels[k * 4] = brightness[k];
     pixels[k * 4 + 1] = 0;
     pixels[k * 4 + 2] = 0;

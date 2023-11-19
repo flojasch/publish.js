@@ -34,6 +34,7 @@ function setup() {
   text3.position(550, 60);
   text3.style('font-size', '130%');
   text3.style('color', '#ffffff');
+  pixelDensity(1);
 }
 
 function toggleWeis(){
@@ -57,9 +58,8 @@ function colorValues(x) {
 
 function setPixel() {
   loadPixels();
-  let d=pixelDensity();
-  let w=d*width;
-  let h=d*height;
+  let w=width;
+  let h=height;
   for (let i = 0; i < w; i++) {
     let p=1;
     let x = (i - w / 2);

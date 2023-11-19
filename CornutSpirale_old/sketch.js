@@ -1,15 +1,17 @@
 let Arrows = [];
-let R = 500;
 let slider;
 let widthSlider;
 let lambda = 200;
 let brightness = [];
-let pd;
 let settingPixel=false;
+let myshader;
 
+function preload(){
+  myshader=loadShader('shader.vert','shader.frag');
+}
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  createCanvas(windowWidth, windowHeight,WEBGL);
   slider = createSlider(1, 300, 50, 1);
   slider.position(50, 50);
   lambslider = createSlider(1, 300, 100, 1);
@@ -19,49 +21,31 @@ function setup() {
   button=createButton("calcLight");
   button.position(50,200);
   button.mousePressed(setBrightness);
-  pd=pixelDensity();
+  pixelDensity(1);
 }
 
 function setBrightness() {
-  arrownum = slider.value();
-  lambda = lambslider.value();
-  breite = widthSlider.value();
-
   let d = breite / arrownum;
-  R = 1000 / arrownum;
-  let w=width;
-  let h=height;
-  let maxValue=0;
 
-  for (let i = 0; i < w; i++) {
-    for (let j = 0; j < h; j++) {
-      let x=i;
-      let y=j;
+  for (let i = 0; i < width; i++) {
+    for (let j = 0; j < height; j++) {
+      let x=0;
+      let y=0;
       for (let k = 0; k < arrownum; k++) {
-        let dx = i - (d * k + (w - breite) / 2);
+        let dx = i - (d * k + (width - breite) / 2);
         let alpha = sqrt(j * j + dx * dx) / lambda * TWO_PI;
-        x += R * cos(alpha);
-        y += R * sin(alpha);
+        x += cos(alpha);
+        y += sin(alpha);
       }
-      let dx = i - x;
-      let dy = j - y;
-      let value= dx * dx + dy * dy;
-      if(value>maxValue) maxValue=value;
-      for (let di = 0; di < pd; di++) 
-        for (let dj = 0; dj < pd; dj++)  
-          brightness[i*pd+di + (dj+j*pd)*w*pd] = value;
+      brightness[i + j*width]= min(255*(x * x + y * y)/arrownum**2,255);
     }
-  }
-
-  for (let i = 0; i < w*h*pd*pd; i++) {
-      brightness[i] *= 255/maxValue;
   }
   settingPixel=true;
 }
 
 function setPixel() {
   loadPixels();
-  for (let k = 0; k < width *pd* height*pd; k++) {
+  for (let k = 0; k < width *height; k++) {
     pixels[k * 4] = brightness[k];
     pixels[k * 4 + 1] = 0;
     pixels[k * 4 + 2] = 0;
@@ -79,12 +63,20 @@ function draw() {
   breite = widthSlider.value();
 
   Arrows = [];
-  background(0);
+
+  myshader.setUniform("u_resolution", [width, height]);
+  myshader.setUniform("mouse",[mouseX/width,1-mouseY/height]);
+  myshader.setUniform("lambda", lambda/width); 
+  myshader.setUniform("breite",breite/width);
+  shader(myshader);
+  rect(0,0,width,height);
+  
+  //background(0);
   if(settingPixel) setPixel();
   stroke(0, 0, 250);
   line(50, 120, 50 + lambda, 120);
   let d = breite / arrownum;
-  R = 1000 / arrownum;
+  let R = 1000 / arrownum;
   let x = mouseX;
   let y = mouseY;
   for (let k = 0; k < arrownum; k++) {
@@ -93,7 +85,7 @@ function draw() {
     Arrows[k] = new Arrow(x, y, alpha);
     Arrows[k].show();
     stroke(255, 255, 255, 100);
-    line(d * k + (width - breite) / 2, 0, x, y);
+    //line(d * k + (width - breite) / 2, 0, x, y);
     x += R * cos(alpha);
     y += R * sin(alpha);
   }
@@ -110,6 +102,7 @@ class Arrow {
   }
 
   show() {
+    let R=1000/arrownum;
     stroke(0, 255, 255);
     push();
     translate(this.xa, this.ya);

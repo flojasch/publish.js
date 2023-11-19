@@ -12,7 +12,8 @@ function setup() {
   text.style('font-size', '130%');
   text.style('color', '#ffffff');
   let lMax = wienConst / tMax;
-  norm = 1 / planck(lMax, tMax);
+  norm = 1 / planck(lMax, tMax)
+  pixelDensity(1);
 }
 
 function resultingColor(T) {
