@@ -28,6 +28,7 @@ function setup() {
   g = new p5.Geometry(200, 200, oberflaeche);
   pg = createGraphics(windowWidth / 2, windowHeight, WEBGL);
   pg.background(100);
+  pixelDensity(1);
 }
 
 function calcPotential() {
